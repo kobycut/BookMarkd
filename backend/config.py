@@ -1,4 +1,5 @@
 import os
+from sqlalchemy import StaticPool
 
 class Config:
     """Base configuration"""
@@ -29,3 +30,13 @@ config = {
     'testing': TestingConfig,
     'default': DevelopmentConfig
 }
+
+class EphemeralDBConfig(Config):
+    # Single-process, in-memory SQLite
+    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+    # Make the same in-memory DB visible across threads in the app process
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "connect_args": {"check_same_thread": False},
+        "poolclass": StaticPool,
+    }
+    
