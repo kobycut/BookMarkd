@@ -113,7 +113,7 @@ export function BookList() {
           <Card key={book.id} className="overflow-hidden hover:shadow-lg transition-shadow">
             <div className="flex gap-4 p-4">
               {/* Book Cover */}
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <div className="w-24 h-36 rounded-lg overflow-hidden bg-gray-200">
                   <img
                     src={book.cover}
@@ -172,7 +172,7 @@ export function BookList() {
                       </div>
                       <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-gradient-to-r from-blue-600 to-green-600 rounded-full transition-all"
+                          className="h-full bg-linear-to-r from-blue-600 to-green-600 rounded-full transition-all"
                           style={{ width: `${book.progress}%` }}
                         />
                       </div>

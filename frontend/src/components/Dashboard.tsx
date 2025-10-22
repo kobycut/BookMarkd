@@ -22,14 +22,14 @@ export function Dashboard({ onLogout }: DashboardProps) {
   const [showAddBook, setShowAddBook] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50/50 via-white to-green-50/50">
+    <div className="min-h-screen bg-linear-to-br from-blue-50/50 via-white to-green-50/50">
       {/* Navigation Bar */}
       <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-500 to-green-500 rounded-xl">
+              <div className="flex items-center justify-center w-10 h-10 bg-linear-to-br from-blue-500 to-green-500 rounded-xl">
                 <BookMarked className="w-6 h-6 text-white" />
               </div>
               <span className="text-xl text-gray-900">BookMarkd</span>
@@ -95,7 +95,7 @@ export function Dashboard({ onLogout }: DashboardProps) {
               <h2 className="text-gray-900">My Books</h2>
               <Button
                 onClick={() => setShowAddBook(true)}
-                className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
+                className="bg-linear-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Book
@@ -114,7 +114,7 @@ export function Dashboard({ onLogout }: DashboardProps) {
       {/* Floating Add Button (Mobile) */}
       <button
         onClick={() => setShowAddBook(true)}
-        className="lg:hidden fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white rounded-full shadow-lg flex items-center justify-center"
+        className="lg:hidden fixed bottom-6 right-6 w-14 h-14 bg-linear-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white rounded-full shadow-lg flex items-center justify-center"
       >
         <Plus className="w-6 h-6" />
       </button>

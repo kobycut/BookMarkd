@@ -81,7 +81,7 @@ export function ReadingGoals() {
           return (
             <Card key={goal.id} className="p-5 hover:shadow-md transition-shadow">
               <div className="flex items-start gap-3 mb-4">
-                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br from-blue-100 to-green-100 flex items-center justify-center">
+                <div className="shrink-0 w-10 h-10 rounded-lg bg-linear-to-br from-blue-100 to-green-100 flex items-center justify-center">
                   <Icon className="w-5 h-5 text-blue-700" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -110,7 +110,7 @@ export function ReadingGoals() {
       </div>
 
       {/* Insights Card */}
-      <Card className="mt-6 p-5 bg-gradient-to-br from-blue-50 to-green-50 border-blue-200">
+      <Card className="mt-6 p-5 bg-linear-to-br from-blue-50 to-green-50 border-blue-200">
         <h3 className="text-gray-900 mb-3">This Month</h3>
         <div className="space-y-3">
           <div className="flex items-center justify-between">

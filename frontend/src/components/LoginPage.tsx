@@ -19,11 +19,11 @@ export function LoginPage({ onLogin }: LoginPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-green-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-green-500 rounded-2xl mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-linear-to-br from-blue-500 to-green-500 rounded-2xl mb-4">
             <BookMarked className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl text-gray-900 mb-2">BookMarkd</h1>
@@ -101,7 +101,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
 
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
+              className="w-full bg-linear-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
             >
               {isSignup ? 'Sign up' : 'Sign in'}
             </Button>

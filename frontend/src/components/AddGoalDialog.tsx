@@ -88,7 +88,7 @@ export function AddGoalDialog({ open, onOpenChange }: AddGoalDialogProps) {
             </Button>
             <Button
               type="submit"
-              className="flex-1 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
+              className="flex-1 bg-linear-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
             >
               Create Goal
             </Button>
