@@ -2,6 +2,10 @@
 
 BookMarkd is an all-in-one book enjoyer's website. This app is much like Letterboxd but for books. Rate books, share books with friends, receive book recommendations, join online book clubs, or set personal reading goals are some of BookMarkd's features.
 
+## Wiki
+
+Wiki for this project is maintained in the class wiki repo here: [Wiki Repo](https://github.com/cs428TAs/f2025/wiki/Incentive-Book-Club)
+
 ## Project Structure
 
 ```
