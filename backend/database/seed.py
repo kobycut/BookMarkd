@@ -4,7 +4,7 @@ from datetime import date, timedelta
 from typing import List, Tuple
 
 from extensions import db
-from models import User, Book, Club, UserBook, UserClub, BookGoal, PageGoal
+from models import User, Book, Club, UserBook, UserClub, BookGoal, PageGoal, HourGoal
 
 # ---------------------------
 # Configurable “big seed” knobs
@@ -15,6 +15,10 @@ NUM_CLUBS = 6           # total clubs to create
 MAX_BOOKS_PER_USER = 8  # each user will have up to this many books
 MAX_CLUBS_PER_USER = 2  # each user will join up to this many clubs
 GOAL_USERS_FRACTION = 0.75  # ~75% of users get goals
+
+# Hour goals: about this fraction of users get 1–2 hour goals
+HOUR_GOAL_USERS_FRACTION = 0.7
+HOUR_GOAL_CHOICES = [5, 10, 15, 20, 25]  # num_hours pool
 
 # For reproducibility across runs (optional)
 RANDOM_SEED = 42
@@ -87,11 +91,11 @@ def _rand_date_within(days: int = 365) -> date:
 def _uniq_usernames(n: int) -> List[str]:
     base = set()
     while len(base) < n:
-        u = f"{random.choice(FIRST_NAMES)}{random.choice(LAST_NAMES)}".lower()
+        username = f"{random.choice(FIRST_NAMES)}{random.choice(LAST_NAMES)}".lower()
         # add a suffix sometimes to reduce collision risk
         if random.random() < 0.35:
-            u += str(random.randint(1, 999))
-        base.add(u)
+            username += str(random.randint(1, 999))
+        base.add(username)
     return list(base)
 
 def _email_for(username: str) -> str:
@@ -125,8 +129,8 @@ def _random_title() -> Tuple[str, str, int, str]:
 def _create_users(n: int) -> List[User]:
     usernames = _uniq_usernames(n)
     users: List[User] = []
-    for u in usernames:
-        user = User(username=u, email=_email_for(u), password_hash="")
+    for username in usernames:
+        user = User(username=username, email=_email_for(username), password_hash="")
         user.set_password("password123")  # default demo password
         users.append(user)
     db.session.add_all(users)
@@ -137,20 +141,20 @@ def _create_books(n: int) -> List[Book]:
     books: List[Book] = []
     # Prefer known titles, then synthesize more if needed
     pool = []
-    for t, a, p in PROGRAMMING_TITLES + NONFICTION_TITLES + FICTION_TITLES:
-        pool.append((t, a, p, None))  # genre None means we'll map below
+    for title, author, page in PROGRAMMING_TITLES + NONFICTION_TITLES + FICTION_TITLES:
+        pool.append((title, author, page, None))  # genre None means we'll map below
     # Add synthetic titles to reach n
     while len(pool) < n:
-        t, a, p, g = _random_title()
-        pool.append((t, a, p, g))
+        title, author, page, genre = _random_title()
+        pool.append((title, author, page, genre))
 
     random.shuffle(pool)
     for i in range(n):
-        t, a, p, g = pool[i]
-        genre = g if g else ( "Programming" if (t, a, p) in PROGRAMMING_TITLES else
-                              "Nonfiction" if (t, a, p) in NONFICTION_TITLES else
+        title, author, page, genre = pool[i]
+        genre = genre if genre else ( "Programming" if (title, author, page) in PROGRAMMING_TITLES else
+                              "Nonfiction" if (title, author, page) in NONFICTION_TITLES else
                               random.choice(["Fantasy", "Sci-Fi", "Mystery", "Romance", "Horror", "YA", "Literary"]))
-        books.append(Book(title=t, author=a, page_count=p, genre=genre))
+        books.append(Book(title=title, author=author, page_count=page, genre=genre))
     db.session.add_all(books)
     db.session.commit()
     return books
@@ -175,14 +179,14 @@ def _create_clubs(n: int) -> List[Club]:
 # ---------------------------
 def _link_user_books(users: List[User], books: List[Book]) -> None:
     rows: List[UserBook] = []
-    for u in users:
+    for user in users:
         k = random.randint(2, MAX_BOOKS_PER_USER)
         picks = random.sample(books, k=k)
-        for b in picks:
+        for book in picks:
             rating = round(random.uniform(2.5, 5.0), 1) if random.random() < 0.8 else None
             rows.append(UserBook(
-                user_id=u.user_id,
-                book_id=b.book_id,
+                user_id=user.user_id,
+                book_id=book.book_id,
                 add_date=_rand_date_within(240),
                 user_rating=rating
             ))
@@ -191,13 +195,13 @@ def _link_user_books(users: List[User], books: List[Book]) -> None:
 
 def _link_user_clubs(users: List[User], clubs: List[Club]) -> None:
     rows: List[UserClub] = []
-    for u in users:
+    for user in users:
         k = random.randint(0, MAX_CLUBS_PER_USER)
         if k == 0:
             continue
         picks = random.sample(clubs, k=k)
-        for c in picks:
-            rows.append(UserClub(user_id=u.user_id, club_id=c.club_id))
+        for club in picks:
+            rows.append(UserClub(user_id=user.user_id, club_id=club.club_id))
     db.session.add_all(rows)
     db.session.commit()
 
@@ -205,35 +209,50 @@ def _link_user_clubs(users: List[User], clubs: List[Club]) -> None:
 # Goals
 # ---------------------------
 def _create_goals(users: List[User]) -> None:
+    """Create book, page, and hour goals for subsets of users. """
     book_goal_rows: List[BookGoal] = []
     page_goal_rows: List[PageGoal] = []
+    hour_goal_rows: List[HourGoal] = []
 
-    for u in users:
-        if random.random() > GOAL_USERS_FRACTION:
-            continue
+    for user in users:
+        # Book/Page goals cohort
+        if random.random() <= GOAL_USERS_FRACTION:
+            # 1–2 book goals
+            for _ in range(random.randint(1, 2)):
+                book_goal_rows.append(BookGoal(
+                    user_id=user.user_id,
+                    description=random.choice([
+                        "Read more sci-fi", "Finish a trilogy", "Explore non-fiction",
+                        "Try a new genre", "Classics month"
+                    ]),
+                    num_books=random.choice([3, 5, 10, 12])
+                ))
+            # 1–2 page goals
+            for _ in range(random.randint(1, 2)):
+                page_goal_rows.append(PageGoal(
+                    user_id=user.user_id,
+                    description=random.choice([
+                        "Daily 20 pages", "Weekend long reads", "Commute reading",
+                        "Bedtime chapter", "Morning routine pages"
+                    ]),
+                    num_pages=random.choice([300, 500, 800, 1000, 1500])
+                ))
 
-        # Each picked user gets 1–2 goals of each type (randomized)
-        for _ in range(random.randint(1, 2)):
-            book_goal_rows.append(BookGoal(
-                user_id=u.user_id,
-                description=random.choice([
-                    "Read more sci-fi", "Finish a trilogy", "Explore non-fiction",
-                    "Try a new genre", "Classics month"
-                ]),
-                num_books=random.choice([3, 5, 10, 12])
-            ))
+        if random.random() <= HOUR_GOAL_USERS_FRACTION:
+            for _ in range(random.randint(1, 2)):
+                hour_goal_rows.append(HourGoal(
+                    user_id=user.user_id,
+                    description=random.choice([
+                        "Read 5 hours per week",
+                        "Nightly reading habit",
+                        "Weekend marathon",
+                        "Lunch-break reading challenge",
+                        "Daily 1-hour focus time"
+                    ]),
+                    num_hours=random.choice(HOUR_GOAL_CHOICES)
+                ))
 
-        for _ in range(random.randint(1, 2)):
-            page_goal_rows.append(PageGoal(
-                user_id=u.user_id,
-                description=random.choice([
-                    "Daily 20 pages", "Weekend long reads", "Commute reading",
-                    "Bedtime chapter", "Morning routine pages"
-                ]),
-                num_pages=random.choice([300, 500, 800, 1000, 1500])
-            ))
-
-    db.session.add_all(book_goal_rows + page_goal_rows)
+    db.session.add_all(book_goal_rows + page_goal_rows + hour_goal_rows)
     db.session.commit()
 
 # ---------------------------
@@ -266,10 +285,10 @@ def _ensure_minimum_links(users: List[User], books: List[Book], clubs: List[Club
     """Soft pass to give isolated users a book or a club."""
     # users without any books
     lonely_users = [u for u in users if not u.user_books]
-    for u in lonely_users:
+    for user in lonely_users:
         b = random.choice(books)
         db.session.add(UserBook(
-            user_id=u.user_id,
+            user_id=user.user_id,
             book_id=b.book_id,
             add_date=_rand_date_within(120),
             user_rating=round(random.uniform(3.0, 5.0), 1)
@@ -278,8 +297,8 @@ def _ensure_minimum_links(users: List[User], books: List[Book], clubs: List[Club
     # users without any clubs (only if clubs exist)
     if clubs:
         clubless = [u for u in users if not u.user_clubs]
-        for u in clubless:
+        for user in clubless:
             c = random.choice(clubs)
-            db.session.add(UserClub(user_id=u.user_id, club_id=c.club_id))
+            db.session.add(UserClub(user_id=user.user_id, club_id=c.club_id))
 
     db.session.commit()

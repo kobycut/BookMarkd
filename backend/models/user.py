@@ -9,9 +9,10 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
 
-    # Relationships (so you can do user.book_goals, user.user_books, etc.)
+    # Relationships
     book_goals = db.relationship("BookGoal", back_populates="user", cascade="all, delete-orphan")
     page_goals = db.relationship("PageGoal", back_populates="user", cascade="all, delete-orphan")
+    hour_goals = db.relationship("HourGoal", back_populates="user", cascade="all, delete-orphan")
     user_books = db.relationship("UserBook", back_populates="user", cascade="all, delete-orphan")
     user_clubs = db.relationship("UserClub", back_populates="user", cascade="all, delete-orphan")
 

@@ -3,7 +3,7 @@ from extensions import db
 class Book(db.Model):
     __tablename__ = "book"
 
-    book_id = db.Column(db.BigInteger, primary_key=True)
+    book_id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     author = db.Column(db.String(120), nullable=False)
     page_count = db.Column(db.Integer)

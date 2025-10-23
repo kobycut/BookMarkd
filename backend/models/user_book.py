@@ -5,7 +5,7 @@ class UserBook(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.user_id"), nullable=False)
-    book_id = db.Column(db.BigInteger, db.ForeignKey("book.book_id"), nullable=False)
+    book_id = db.Column(db.Integer, db.ForeignKey("book.book_id"), nullable=False)
     add_date = db.Column(db.Date)
     user_rating = db.Column(db.Float)
 
