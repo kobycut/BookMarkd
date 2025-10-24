@@ -6,11 +6,7 @@ import { Eye, EyeOff, BookMarked } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useUser } from '../context/UserContext';
 
-interface LoginPageProps {
-  onLogin: () => void;
-}
-
-export function LoginPage({ onLogin }: LoginPageProps) {
+export function LoginPage() {
   const { setUser } = useUser();
   const [showPassword, setShowPassword] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
@@ -18,7 +14,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const API_URL = (import.meta.env.VITE_API_URL || '');
 
@@ -28,7 +24,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setSubmitting(true);
 
     try {
       const endpoint = isSignup ? '/api/auth/register' : '/api/auth/login';
@@ -50,31 +46,26 @@ export function LoginPage({ onLogin }: LoginPageProps) {
       if (!res.ok) {
         const msg = (data && (data.error || data.message)) || res.statusText || 'Unknown error';
         toast.error(String(msg));
-        setLoading(false);
+        setSubmitting(false);
         return;
       }
 
       const token = data?.token;
       if (!token) {
         toast.error('No token returned from server');
-        setLoading(false);
+        setSubmitting(false);
         return;
       }
-
       // TODO - consider more secure storage for production, like sending httpOnly cookies from backend
       localStorage.setItem('token', token);
 
-      const userData = data?.user;
-      if (userData) {
-        setUser(userData);
-        toast.success(`Welcome ${userData.username}!`);
-      }
+      if (data?.user)
+        setUser(data.user);
 
-      setLoading(false);
-      onLogin();
+      setSubmitting(false);
     } catch (err: any) {
       toast.error(err?.message || 'Network error');
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
@@ -150,10 +141,10 @@ export function LoginPage({ onLogin }: LoginPageProps) {
 
             <Button
               type="submit"
-              disabled={loading || !isValid}
+              disabled={submitting || !isValid}
               className="w-full bg-linear-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
             >
-              {loading ? (isSignup ? 'Creating...' : 'Signing in...') : isSignup ? 'Sign up' : 'Sign in'}
+              {submitting ? (isSignup ? 'Creating...' : 'Signing in...') : isSignup ? 'Sign up' : 'Sign in'}
             </Button>
           </form>
 

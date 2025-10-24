@@ -15,13 +15,9 @@ import {
 } from './ui/dropdown-menu';
 import { useUser } from '@/context/UserContext';
 
-interface DashboardProps {
-  onLogout: () => void;
-}
-
-export function Dashboard({ onLogout }: DashboardProps) {
+export function Dashboard() {
   const [showAddBook, setShowAddBook] = useState(false);
-  const { user } = useUser();
+  const { user, logout } = useUser();
 
   const getInitials = (username: string = '') => {
     return username
@@ -85,7 +81,7 @@ export function Dashboard({ onLogout }: DashboardProps) {
                     <Settings className="w-4 h-4 mr-2" />
                     Settings
                   </DropdownMenuItem>
-                  <DropdownMenuItem  className="hover:cursor-pointer" onClick={onLogout}>
+                  <DropdownMenuItem  className="hover:cursor-pointer" onClick={logout}>
                     <LogOut className="w-4 h-4 mr-2 hover:cursor-pointer" />
                     Logout
                   </DropdownMenuItem>
