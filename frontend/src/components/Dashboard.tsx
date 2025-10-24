@@ -49,14 +49,14 @@ export function Dashboard({ onLogout }: DashboardProps) {
 
             {/* Right Menu */}
             <div className="flex items-center gap-4">
-              <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+              <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors hover:cursor-pointer">
                 <Bell className="w-5 h-5" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-blue-600 rounded-full"></span>
               </button>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                  <button className="flex items-center gap-2 hover:opacity-80 transition-opacity hover:cursor-pointer">
                     <Avatar>
                       <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" />
                       <AvatarFallback>JD</AvatarFallback>
@@ -71,12 +71,12 @@ export function Dashboard({ onLogout }: DashboardProps) {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
+                  <DropdownMenuItem className="hover:cursor-pointer">
                     <Settings className="w-4 h-4 mr-2" />
                     Settings
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={onLogout}>
-                    <LogOut className="w-4 h-4 mr-2" />
+                  <DropdownMenuItem  className="hover:cursor-pointer" onClick={onLogout}>
+                    <LogOut className="w-4 h-4 mr-2 hover:cursor-pointer" />
                     Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>

@@ -101,10 +101,10 @@ export function BookList() {
     <div>
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
         <TabsList className="w-full justify-start bg-gray-100">
-          <TabsTrigger value="all">All Books</TabsTrigger>
-          <TabsTrigger value="reading">Currently Reading</TabsTrigger>
-          <TabsTrigger value="read">Read</TabsTrigger>
-          <TabsTrigger value="wishlist">Wishlist</TabsTrigger>
+          <TabsTrigger className="hover:cursor-pointer" value="all">All Books</TabsTrigger>
+          <TabsTrigger className="hover:cursor-pointer" value="reading">Currently Reading</TabsTrigger>
+          <TabsTrigger className="hover:cursor-pointer" value="read">Read</TabsTrigger>
+          <TabsTrigger className="hover:cursor-pointer" value="wishlist">Wishlist</TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -133,13 +133,13 @@ export function BookList() {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button className="text-gray-400 hover:text-gray-600 p-1">
-                        <MoreVertical className="w-5 h-5" />
+                        <MoreVertical className="w-5 h-5 hover:cursor-pointer" />
                       </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem>Edit</DropdownMenuItem>
-                      <DropdownMenuItem>Change Status</DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-600">Remove</DropdownMenuItem>
+                      <DropdownMenuItem className="hover:cursor-pointer">Edit</DropdownMenuItem>
+                      <DropdownMenuItem className="hover:cursor-pointer">Change Status</DropdownMenuItem>
+                      <DropdownMenuItem className="text-red-600 hover:cursor-pointer">Remove</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>

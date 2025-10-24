@@ -112,7 +112,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
               {isSignup ? 'Already have an account?' : "Don't have an account?"}{' '}
               <button
                 onClick={() => setIsSignup(!isSignup)}
-                className="text-blue-600 hover:text-blue-700"
+                className="text-blue-600 hover:text-blue-700 hover:cursor-pointer"
               >
                 {isSignup ? 'Sign in' : 'Create an account'}
               </button>
