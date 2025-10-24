@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from backend.models import User
-from backend.extensions import db
+from models import User
+from extensions import db
 import re
 from sqlalchemy import or_
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
@@ -39,12 +39,13 @@ def register():
         db.session.rollback()
         return jsonify({'error': 'Failed to create user'}), 500
     
-    token = create_access_token(identity=user.id)
+    # Store JWT subject as string to satisfy PyJWT's strict subject validation.
+    token = create_access_token(identity=str(user.user_id))
     
     return jsonify({
         'message': 'User created successfully',
         'user': {
-            'id': user.id,
+            'id': user.user_id,
             'username': user.username,
             'email': user.email
         },
@@ -64,12 +65,12 @@ def login():
     if not user or not user.check_password(password):
         return jsonify({'error': 'Invalid email or password'}), 401
     
-    token = create_access_token(identity=user.id)
+    token = create_access_token(identity=str(user.user_id))
 
     return jsonify({
         'message': 'Login successful',
         'user': {
-            'id': user.id,
+            'id': user.user_id,
             'username': user.username,
             'email': user.email
         },
@@ -87,8 +88,12 @@ def logout():
 def get_current_user():
     # Get user ID from the JWT token
     user_id = get_jwt_identity()
+    try:
+        user_id = int(user_id)
+    except (TypeError, ValueError):
+        return jsonify({'error': 'Invalid token subject'}), 422
     
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     
     # Handle case where user was deleted but token still valid
     if not user:
@@ -96,7 +101,7 @@ def get_current_user():
     
     return jsonify({
         'user': {
-            'id': user.id,
+            'id': user.user_id,
             'username': user.username,
             'email': user.email,
         }

@@ -1,7 +1,18 @@
+import os
+import sys
+from pathlib import Path
 import pytest
-from backend.app import create_app
-from backend.extensions import db
-from backend.models import User
+
+# Add the backend directory to sys.path so we can import modules
+TESTS_DIR = Path(__file__).resolve().parent  # tests/
+BACKEND_DIR = TESTS_DIR.parent  # backend/
+
+if str(BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(BACKEND_DIR))
+
+from app import create_app
+from extensions import db
+from models import User
 
 @pytest.fixture
 def app():
