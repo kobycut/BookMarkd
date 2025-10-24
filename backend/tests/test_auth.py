@@ -1,6 +1,6 @@
 import json
-from backend.models import User
-from backend.extensions import db
+from models import User
+from extensions import db
 
 class TestRegister:
     """Tests for /auth/register endpoint"""
@@ -133,27 +133,26 @@ class TestLogin:
 class TestGetCurrentUser:
     """Tests for /auth/me endpoint"""
     
-    # TODO Fix this flippin test lol
-    # def test_get_me_success(self, client, sample_user, app):
-    #     """Test getting current user info with valid token"""
-    #     # First login to get token
-    #     login_response = client.post('/api/auth/login', 
-    #         json={
-    #             'email': 'test@example.com',
-    #             'password': 'password123'
-    #         }
-    #     )
-    #     token = login_response.get_json()['token']
+    def test_get_me_success(self, client, sample_user, app):
+        """Test getting current user info with valid token"""
+        # First login to get token
+        login_response = client.post('/api/auth/login', 
+            json={
+                'email': 'test@example.com',
+                'password': 'password123'
+            }
+        )
+        token = login_response.get_json()['token']
         
-    #     # Now call /me with token
-    #     response = client.get('/api/auth/me',
-    #         headers={'Authorization': f'Bearer {token}'}
-    #     )
+        # Now call /me with token
+        response = client.get('/api/auth/me',
+            headers={'Authorization': f'Bearer {token}'}
+        )
         
-    #     assert response.status_code == 200
-    #     data = response.get_json()
-    #     assert data['user']['username'] == 'testuser'
-    #     assert data['user']['email'] == 'test@example.com'
+        assert response.status_code == 200
+        data = response.get_json()
+        assert data['user']['username'] == 'testuser'
+        assert data['user']['email'] == 'test@example.com'
     
     def test_get_me_no_token(self, client):
         """Test /me without authorization token"""

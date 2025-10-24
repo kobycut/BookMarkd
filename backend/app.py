@@ -1,8 +1,8 @@
 import os
 from flask import Flask, jsonify
 from flask_cors import CORS
-from backend.config import config
-from backend.extensions import db, jwt
+from config import config
+from extensions import db, jwt
 from database import init_db
 
 def create_app(config_name=None):
@@ -28,8 +28,8 @@ def create_app(config_name=None):
     jwt.init_app(app)
 
     # Register Blueprints
-    from backend.routes.auth import auth_bp
-    from backend.routes.health import health_bp
+    from routes.auth import auth_bp
+    from routes.health import health_bp
     
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(health_bp, url_prefix='/api')

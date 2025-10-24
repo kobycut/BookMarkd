@@ -1,5 +1,5 @@
-from backend.models import User
-from backend.extensions import db
+from models import User
+from extensions import db
 
 class TestUserModel:
     """Tests for User model"""
