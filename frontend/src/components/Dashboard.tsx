@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from './ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Avatar, AvatarFallback } from './ui/avatar';
 import { BookMarked, Plus, Search, Bell, Settings, LogOut } from 'lucide-react';
 import { BookList } from './BookList';
 import { ReadingGoals } from './ReadingGoals';
@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
+import { useUser } from '@/context/UserContext';
 
 interface DashboardProps {
   onLogout: () => void;
@@ -20,6 +21,16 @@ interface DashboardProps {
 
 export function Dashboard({ onLogout }: DashboardProps) {
   const [showAddBook, setShowAddBook] = useState(false);
+  const { user } = useUser();
+
+  const getInitials = (username: string = '') => {
+    return username
+      .split(' ')
+      .map(part => part[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2) || '';
+  };
 
   return (
     <div className="min-h-screen bg-linear-to-br from-blue-50/50 via-white to-green-50/50">
@@ -58,16 +69,15 @@ export function Dashboard({ onLogout }: DashboardProps) {
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-2 hover:opacity-80 transition-opacity hover:cursor-pointer">
                     <Avatar>
-                      <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" />
-                      <AvatarFallback>JD</AvatarFallback>
+                      <AvatarFallback>{getInitials(user?.username)}</AvatarFallback>
                     </Avatar>
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel>
                     <div>
-                      <p>John Doe</p>
-                      <p className="text-sm text-gray-500">john@example.com</p>
+                      <p>{user?.username}</p>
+                      <p className="text-sm text-gray-500">{user?.email}</p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />

@@ -2,20 +2,80 @@ import { useState } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import { Checkbox } from './ui/checkbox';
 import { Eye, EyeOff, BookMarked } from 'lucide-react';
+import { toast } from 'react-hot-toast';
+import { useUser } from '../context/UserContext';
 
 interface LoginPageProps {
   onLogin: () => void;
 }
 
 export function LoginPage({ onLogin }: LoginPageProps) {
+  const { setUser } = useUser();
   const [showPassword, setShowPassword] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const API_URL = (import.meta.env.VITE_API_URL || '');
+
+  const isValid = isSignup
+    ? (name.trim() && email.trim() && password)
+    : (email.trim() && password);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onLogin();
+    setLoading(true);
+
+    try {
+      const endpoint = isSignup ? '/api/auth/register' : '/api/auth/login';
+      const payload: Record<string, unknown> = {
+        email: email.trim().toLowerCase(),
+        password,
+      };
+      if (isSignup)
+        payload['username'] = name.trim();
+
+      const res = await fetch(`${API_URL}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        const msg = (data && (data.error || data.message)) || res.statusText || 'Unknown error';
+        toast.error(String(msg));
+        setLoading(false);
+        return;
+      }
+
+      const token = data?.token;
+      if (!token) {
+        toast.error('No token returned from server');
+        setLoading(false);
+        return;
+      }
+
+      // TODO - consider more secure storage for production, like sending httpOnly cookies from backend
+      localStorage.setItem('token', token);
+
+      const userData = data?.user;
+      if (userData) {
+        setUser(userData);
+        toast.success(`Welcome ${userData.username}!`);
+      }
+
+      setLoading(false);
+      onLogin();
+    } catch (err: any) {
+      toast.error(err?.message || 'Network error');
+      setLoading(false);
+    }
   };
 
   return (
@@ -42,6 +102,8 @@ export function LoginPage({ onLogin }: LoginPageProps) {
                 <Label htmlFor="name">Full Name</Label>
                 <Input
                   id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   type="text"
                   placeholder="Enter your name"
                   className="bg-gray-50 border-gray-300"
@@ -53,6 +115,8 @@ export function LoginPage({ onLogin }: LoginPageProps) {
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 type="email"
                 placeholder="Enter your email"
                 className="bg-gray-50 border-gray-300"
@@ -64,6 +128,8 @@ export function LoginPage({ onLogin }: LoginPageProps) {
               <div className="relative">
                 <Input
                   id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Enter your password"
                   className="bg-gray-50 border-gray-300 pr-10"
@@ -82,28 +148,12 @@ export function LoginPage({ onLogin }: LoginPageProps) {
               </div>
             </div>
 
-            {!isSignup && (
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="remember" />
-                  <Label
-                    htmlFor="remember"
-                    className="text-sm text-gray-600 cursor-pointer"
-                  >
-                    Remember me
-                  </Label>
-                </div>
-                <a href="#" className="text-sm text-blue-600 hover:text-blue-700">
-                  Forgot password?
-                </a>
-              </div>
-            )}
-
             <Button
               type="submit"
+              disabled={loading || !isValid}
               className="w-full bg-linear-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
             >
-              {isSignup ? 'Sign up' : 'Sign in'}
+              {loading ? (isSignup ? 'Creating...' : 'Signing in...') : isSignup ? 'Sign up' : 'Sign in'}
             </Button>
           </form>
 
