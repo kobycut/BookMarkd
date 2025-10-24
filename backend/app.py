@@ -3,6 +3,7 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 from backend.config import config
 from backend.extensions import db, jwt
+from database import init_db
 
 def create_app(config_name=None):
     """Application factory that configures extensions and routes."""
@@ -32,6 +33,10 @@ def create_app(config_name=None):
     
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(health_bp, url_prefix='/api')
+    
+    
+    # Initialize the Ephemeral DB (create tables + seed)
+    init_db(app, seed=True)
 
     return app
 
