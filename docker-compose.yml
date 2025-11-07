@@ -36,10 +36,11 @@ services:
 
   # React Frontend
   frontend:
-    build: ./frontend
+    build: 
+      context: ./frontend
+      args:
+        VITE_API_URL: http://localhost:5001
     container_name: bookmarkd-frontend
-    environment:
-      REACT_APP_API_URL: http://localhost:5001
     ports:
       - "5173:5173"
     depends_on:
