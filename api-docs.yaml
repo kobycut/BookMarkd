@@ -2,7 +2,7 @@ api:
   name: "Bookmarkd API"
   description: "API for bookmarkd application"
   version: "1.0.0"
-  base_url: "http://localhost:5001/api"
+  base_url: "http://localhost:5001"
 
 endpoints:
   
