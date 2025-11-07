@@ -1,0 +1,34 @@
+api:
+  name: "Bookmarkd API"
+  description: "API for bookmarkd application"
+  version: "1.0.0"
+  base_url: "http://localhost:5001/api"
+
+endpoints:
+  
+  # Health Check Endpoint
+  - name: "Health Check"
+    description: "Check the health status of the API"
+    path: "/api/health"
+    method: "GET"
+  
+  # Authentication Endpoints
+  - name: "User Registration"
+    description: "Create a new user account"
+    path: "/api/auth/register"
+    method: "POST"
+    
+  - name: "User Login"
+    description: "Authenticate user and return access token"
+    path: "/api/auth/login"
+    method: "POST"
+  
+  - name: "User Logout"
+    description: "Log out the current user and invalidate token"
+    path: "/api/auth/logout"
+    method: "POST"
+    
+  - name: "Get Current User"
+    description: "Get information about the currently authenticated user"
+    path: "/api/auth/me"
+    method: "GET"
