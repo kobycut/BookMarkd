@@ -31,7 +31,7 @@ export function AddBookDialog({ open, onOpenChange }: AddBookDialogProps) {
   const [author, setAuthor] = useState('');
   const [editions, setEditions] = useState<OpenLibraryBook[]>([]);
   const [pageIndex, setPageIndex] = useState(0);
-  const [selectedEditionKey, setSelectedEditionKey] = useState<string | null>(null);
+  const [selectedEdition, setSelectedEdition] = useState<OpenLibraryBook | null>(null);
   const [selectedPageCount, setSelectedPageCount] = useState<number | null>(null);
   const [manualPagesDialogOpen, setManualPagesDialogOpen] = useState(false);
   const [manualPageCount, setManualPageCount] = useState<number | null>(null);
@@ -39,11 +39,20 @@ export function AddBookDialog({ open, onOpenChange }: AddBookDialogProps) {
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
   const submitBook = async () => {
+    if (!selectedEdition) return;
+
     const pageCount = selectedPageCount ?? manualPageCount;
-    // TODO - submit the book to backend
-    toast.success(`Book added! (Pages: ${pageCount ?? 'N/A'})`);
+    const pagesRead = 0;
+
+    const authors = selectedEdition.author_name?.join(', ') ?? 'Unknown author';
+
+    toast.success(
+      `Book added to My Books! "${selectedEdition.title}" by ${authors}. I've read ${pagesRead} out of ${pageCount} pages.`
+    );
+
     onOpenChange(false);
-  }
+  };
+
 
   const handleAddBook = () => {
     if (!selectedPageCount) {
@@ -68,7 +77,7 @@ export function AddBookDialog({ open, onOpenChange }: AddBookDialogProps) {
   };
 
   const changePage = (delta: number) => {
-    setSelectedEditionKey(null);
+    setSelectedEdition(null);
     setSelectedPageCount(null);
     setPageIndex((i) => {
       const next = i + delta;
@@ -80,7 +89,7 @@ export function AddBookDialog({ open, onOpenChange }: AddBookDialogProps) {
   const currentPage = editions.slice(pageIndex * 5, pageIndex * 5 + 5);
 
   useEffect(() => {
-    if (!selectedEditionKey) {
+    if (!selectedEdition) {
       setSelectedPageCount(null);
       return;
     }
@@ -88,9 +97,9 @@ export function AddBookDialog({ open, onOpenChange }: AddBookDialogProps) {
     const fetchEditionDetails = async () => {
       // this check is to ensure we only fetch for valid edition keys. Some keys
       // in Open Library are "work" keys which don't have page count info
-      if (selectedEditionKey.startsWith('OL') && selectedEditionKey.endsWith('M')) {
+      if (selectedEdition.key.startsWith('OL') && selectedEdition.key.endsWith('M')) {
         try {
-          const res = await fetch(`https://openlibrary.org/books/${selectedEditionKey}.json`);
+          const res = await fetch(`https://openlibrary.org/books/${selectedEdition.key}.json`);
           const data = await res.json();
           const pages = data.number_of_pages ?? null;
           setSelectedPageCount(pages);
@@ -102,7 +111,7 @@ export function AddBookDialog({ open, onOpenChange }: AddBookDialogProps) {
     };
 
     fetchEditionDetails();
-  }, [selectedEditionKey]);
+  }, [selectedEdition]);
 
 
   return (
@@ -152,17 +161,17 @@ export function AddBookDialog({ open, onOpenChange }: AddBookDialogProps) {
           {editions.length > 0 && (
             <div ref={scrollRef} className="border rounded p-2 h-65 overflow-y-auto">
               {currentPage.map((edition) => {
-                const editionId = edition.cover_edition_key ?? edition.edition_key?.[0] ?? edition.key;
-
+                // resolve edition ID: prefer cover_edition_key or edition_key (to get page number info)
+                edition.key = edition.cover_edition_key ?? edition.edition_key?.[0] ?? edition.key;
                 return (
                   <div
                     key={edition.key}
                     className={`flex flex-col gap-1 mb-3 p-2 rounded cursor-pointer 
-                      ${selectedEditionKey === editionId ? 'border-2 border-blue-600 bg-blue-50' : 'border border-transparent'}
+                      ${selectedEdition?.key === edition.key ? 'border-2 border-blue-600 bg-blue-50' : 'border border-transparent'}
                     `}
                     onClick={() => {
                       setSelectedPageCount(null);
-                      setSelectedEditionKey(editionId);
+                      setSelectedEdition(edition);
                     }}
                   >
                     <div className="flex items-center gap-3">
@@ -183,7 +192,7 @@ export function AddBookDialog({ open, onOpenChange }: AddBookDialogProps) {
                       </div>
                     </div>
 
-                    {selectedEditionKey === editionId && selectedPageCount !== null && (
+                    {selectedEdition?.key === edition.key && selectedPageCount !== null && (
                       <div className="text-xs text-gray-400">Pages: {selectedPageCount}</div>
                     )}
                   </div>
@@ -223,7 +232,7 @@ export function AddBookDialog({ open, onOpenChange }: AddBookDialogProps) {
             <Button
               type="button"
               className="flex-1 bg-linear-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
-              disabled={!selectedEditionKey}
+              disabled={!selectedEdition}
               onClick={() => handleAddBook()}
             >
               Add Book
