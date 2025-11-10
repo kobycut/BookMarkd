@@ -40,30 +40,30 @@ def calculate_due_date(duration):
     return None
 
 def calculate_duration_description(duration):
-    """Generate a description based on the duration"""
+    """Generate a description based on the duration, keeping the duration keyword"""
     now = datetime.now()
     
     if duration == 'this year':
-        return f"for {now.year}"
+        return f"this year ({now.year})"
     elif duration == 'this month':
-        return f"for {now.strftime('%B %Y')}"
+        return f"this month ({now.strftime('%B %Y')})"
     elif duration == 'this week':
         # Calculate week start and end
         start = now - timedelta(days=now.weekday())
         end = start + timedelta(days=6)
-        return f"for week of {start.strftime('%b %d')} - {end.strftime('%b %d, %Y')}"
+        return f"this week ({start.strftime('%b %d')} - {end.strftime('%b %d, %Y')})"
     elif duration == 'next year':
-        return f"for {now.year + 1}"
+        return f"next year ({now.year + 1})"
     elif duration == 'next month':
         next_month = now.month + 1 if now.month < 12 else 1
         year = now.year if now.month < 12 else now.year + 1
         next_month_date = datetime(year, next_month, 1)
-        return f"for {next_month_date.strftime('%B %Y')}"
+        return f"next month ({next_month_date.strftime('%B %Y')})"
     elif duration == 'next week':
         # Calculate next week start and end
         start = now - timedelta(days=now.weekday()) + timedelta(days=7)
         end = start + timedelta(days=6)
-        return f"for week of {start.strftime('%b %d')} - {end.strftime('%b %d, %Y')}"
+        return f"next week ({start.strftime('%b %d')} - {end.strftime('%b %d, %Y')})"
     
     return duration
 
