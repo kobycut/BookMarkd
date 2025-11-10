@@ -30,9 +30,11 @@ def create_app(config_name=None):
     # Register Blueprints
     from routes.auth import auth_bp
     from routes.health import health_bp
+    from routes.goals import goals_bp
     
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(health_bp, url_prefix='/api')
+    app.register_blueprint(goals_bp, url_prefix='/api')
     
     
     # Initialize the Ephemeral DB (create tables + seed)
@@ -44,4 +46,3 @@ def create_app(config_name=None):
 if __name__ == '__main__':
     app = create_app()
     app.run(debug=True, host='0.0.0.0', port=5001)
-
