@@ -13,16 +13,14 @@ def calculate_status(page_progress, total_pages):
     
     Returns:
         - "wishlist" if page_progress is 0
-        - "reading" if 0 < progress < 100%
-        - "read" if progress is 100%
+        - "reading" if 0 < page_progress < total_pages
+        - "read" if page_progress >= total_pages
     """
     if page_progress == 0:
         return "wishlist"
     
-    if total_pages and total_pages > 0:
-        progress_percent = (page_progress / total_pages) * 100
-        if progress_percent >= 100:
-            return "read"
+    if total_pages and page_progress >= total_pages:
+        return "read"
     
     return "reading"
 
