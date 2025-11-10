@@ -247,6 +247,66 @@ def get_goals():
     except Exception as e:
         return jsonify({'error': f'Failed to retrieve goals: {str(e)}'}), 500
 
+@goals_bp.route('/goals/<int:goal_id>', methods=['DELETE'])
+@jwt_required()
+def delete_goal(goal_id):
+    """Delete a specific goal for the authenticated user"""
+    user_id = get_jwt_identity()
+    try:
+        user_id = int(user_id)
+    except (TypeError, ValueError):
+        return jsonify({'error': 'Invalid token subject'}), 422
+    
+    # Verify user exists
+    user = db.session.get(User, user_id)
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    
+    try:
+        # Try to find the goal in all three goal types
+        goal = None
+        goal_type = None
+        
+        # Check BookGoal
+        book_goal = BookGoal.query.filter_by(goal_id=goal_id, user_id=user_id).first()
+        if book_goal:
+            goal = book_goal
+            goal_type = 'books read'
+        
+        # Check PageGoal
+        if not goal:
+            page_goal = PageGoal.query.filter_by(goal_id=goal_id, user_id=user_id).first()
+            if page_goal:
+                goal = page_goal
+                goal_type = 'pages read'
+        
+        # Check HourGoal
+        if not goal:
+            hour_goal = HourGoal.query.filter_by(goal_id=goal_id, user_id=user_id).first()
+            if hour_goal:
+                goal = hour_goal
+                goal_type = 'hours read'
+        
+        # If goal not found or doesn't belong to user
+        if not goal:
+            return jsonify({'error': 'Goal not found'}), 404
+        
+        # Delete the goal
+        db.session.delete(goal)
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Goal deleted successfully',
+            'deleted_goal': {
+                'id': goal_id,
+                'type': goal_type
+            }
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f'Failed to delete goal: {str(e)}'}), 500
+
 def extract_duration_from_description(description):
     """Extract duration from goal description"""
     if not description:
