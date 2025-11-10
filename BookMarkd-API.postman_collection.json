@@ -1378,7 +1378,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"title\": \"The Hobbit\",\n  \"author\": \"J.R.R. Tolkien\",\n  \"page_progress\": 0,\n  \"open_library_key\": \"OL51709286M\",\n  \"total_pages\": 310\n}"
+							"raw": "{\n  \"title\": \"The Hobbit\",\n  \"author\": \"J.R.R. Tolkien\",\n  \"page_progress\": 0,\n  \"open_library_id\": \"OL51709286M\",\n  \"total_pages\": 310\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/books",
@@ -1405,7 +1405,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"title\": \"The Hobbit\",\n  \"author\": \"J.R.R. Tolkien\",\n  \"page_progress\": 0,\n  \"open_library_key\": \"OL51709286M\",\n  \"total_pages\": 310\n}"
+									"raw": "{\n  \"title\": \"The Hobbit\",\n  \"author\": \"J.R.R. Tolkien\",\n  \"page_progress\": 0,\n  \"open_library_id\": \"OL51709286M\",\n  \"total_pages\": 310\n}"
 								},
 								"url": {
 									"raw": "{{base_url}}/api/books",
@@ -1428,7 +1428,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n  \"title\": \"The Hobbit\",\n  \"author\": \"J.R.R. Tolkien\",\n  \"status\": \"wishlist\",\n  \"open_library_key\": \"OL51709286M\",\n  \"page_progress\": 0,\n  \"total_pages\": 310\n}"
+							"body": "{\n  \"title\": \"The Hobbit\",\n  \"author\": \"J.R.R. Tolkien\",\n  \"status\": \"wishlist\",\n  \"open_library_id\": \"OL51709286M\",\n  \"page_progress\": 0,\n  \"total_pages\": 310\n}"
 						},
 						{
 							"name": "Create Book - Reading",
@@ -1442,7 +1442,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"title\": \"1984\",\n  \"author\": \"George Orwell\",\n  \"page_progress\": 150,\n  \"open_library_key\": \"OL1168007W\",\n  \"total_pages\": 328\n}"
+									"raw": "{\n  \"title\": \"1984\",\n  \"author\": \"George Orwell\",\n  \"page_progress\": 150,\n  \"open_library_id\": \"OL1168007W\",\n  \"total_pages\": 328\n}"
 								},
 								"url": {
 									"raw": "{{base_url}}/api/books",
@@ -1465,7 +1465,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n  \"title\": \"1984\",\n  \"author\": \"George Orwell\",\n  \"status\": \"reading\",\n  \"open_library_key\": \"OL1168007W\",\n  \"page_progress\": 150,\n  \"total_pages\": 328\n}"
+							"body": "{\n  \"title\": \"1984\",\n  \"author\": \"George Orwell\",\n  \"status\": \"reading\",\n  \"open_library_id\": \"OL1168007W\",\n  \"page_progress\": 150,\n  \"total_pages\": 328\n}"
 						},
 						{
 							"name": "Create Book - Finished",
@@ -1479,7 +1479,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"title\": \"To Kill a Mockingbird\",\n  \"author\": \"Harper Lee\",\n  \"page_progress\": 281,\n  \"open_library_key\": \"OL26965W\",\n  \"total_pages\": 281\n}"
+									"raw": "{\n  \"title\": \"To Kill a Mockingbird\",\n  \"author\": \"Harper Lee\",\n  \"page_progress\": 281,\n  \"open_library_id\": \"OL26965W\",\n  \"total_pages\": 281\n}"
 								},
 								"url": {
 									"raw": "{{base_url}}/api/books",
@@ -1502,7 +1502,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n  \"title\": \"To Kill a Mockingbird\",\n  \"author\": \"Harper Lee\",\n  \"status\": \"read\",\n  \"open_library_key\": \"OL26965W\",\n  \"page_progress\": 281,\n  \"total_pages\": 281\n}"
+							"body": "{\n  \"title\": \"To Kill a Mockingbird\",\n  \"author\": \"Harper Lee\",\n  \"status\": \"read\",\n  \"open_library_id\": \"OL26965W\",\n  \"page_progress\": 281,\n  \"total_pages\": 281\n}"
 						},
 						{
 							"name": "Create Book - Missing Title",
@@ -1516,7 +1516,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"author\": \"J.K. Rowling\",\n  \"page_progress\": 0,\n  \"open_library_key\": \"OL82563W\"\n}"
+									"raw": "{\n  \"author\": \"J.K. Rowling\",\n  \"page_progress\": 0,\n  \"open_library_id\": \"OL82563W\"\n}"
 								},
 								"url": {
 									"raw": "{{base_url}}/api/books",
@@ -1553,7 +1553,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"title\": \"The Hobbit\",\n  \"author\": \"J.R.R. Tolkien\",\n  \"page_progress\": 0,\n  \"open_library_key\": \"OL51709286M\",\n  \"total_pages\": 310\n}"
+									"raw": "{\n  \"title\": \"The Hobbit\",\n  \"author\": \"J.R.R. Tolkien\",\n  \"page_progress\": 0,\n  \"open_library_id\": \"OL51709286M\",\n  \"total_pages\": 310\n}"
 								},
 								"url": {
 									"raw": "{{base_url}}/api/books",
@@ -1590,7 +1590,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"title\": \"The Hobbit\",\n  \"author\": \"J.R.R. Tolkien\",\n  \"page_progress\": 0,\n  \"open_library_key\": \"OL51709286M\",\n  \"total_pages\": 310\n}"
+									"raw": "{\n  \"title\": \"The Hobbit\",\n  \"author\": \"J.R.R. Tolkien\",\n  \"page_progress\": 0,\n  \"open_library_id\": \"OL51709286M\",\n  \"total_pages\": 310\n}"
 								},
 								"url": {
 									"raw": "{{base_url}}/api/books",
