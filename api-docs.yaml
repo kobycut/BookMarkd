@@ -32,24 +32,3 @@ endpoints:
     description: "Get information about the currently authenticated user"
     path: "/api/auth/me"
     method: "GET"
-  
-  # Goals Endpoints
-  - name: "Create Goal"
-    description: "Create a new reading goal (books, pages, or hours) with a target amount and time duration"
-    path: "/api/goals"
-    method: "POST"
-  
-  - name: "Get All Goals"
-    description: "Retrieve all reading goals for the authenticated user with progress tracking"
-    path: "/api/goals"
-    method: "GET"
-  
-  - name: "Update Goal Progress"
-    description: "Update the progress amount for a specific goal"
-    path: "/api/goals/{goal_id}"
-    method: "PUT"
-  
-  - name: "Delete Goal"
-    description: "Delete a specific goal by ID"
-    path: "/api/goals/{goal_id}"
-    method: "DELETE"
