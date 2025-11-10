@@ -1,0 +1,121 @@
+from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from extensions import db
+from models.book import Book
+from models.user_book import UserBook
+
+books_bp = Blueprint("books", __name__)
+
+
+def calculate_status(page_progress, total_pages):
+    """
+    Calculate book status based on page progress.
+    
+    Returns:
+        - "wishlist" if page_progress is 0
+        - "reading" if 0 < progress < 100%
+        - "read" if progress is 100%
+    """
+    if page_progress == 0:
+        return "wishlist"
+    
+    if total_pages and total_pages > 0:
+        progress_percent = (page_progress / total_pages) * 100
+        if progress_percent >= 100:
+            return "read"
+    
+    return "reading"
+
+
+@books_bp.route("/books", methods=["POST"])
+@jwt_required()
+def create_book():
+    """
+    Create a new book for the authenticated user.
+    
+    Required params: title, author, page_progress, open_library_id
+    Optional params: total_pages
+    
+    Returns: title, author, status, open_library_id, page_progress, total_pages
+    """
+    user_id = get_jwt_identity()
+    data = request.get_json()
+    
+    # Validate required fields
+    if not data:
+        return jsonify({"error": "Request body is required"}), 400
+    
+    title = data.get("title")
+    author = data.get("author")
+    page_progress = data.get("page_progress")
+    open_library_id = data.get("open_library_id")
+    total_pages = data.get("total_pages")
+    
+    if not title:
+        return jsonify({"error": "Title is required"}), 400
+    if not author:
+        return jsonify({"error": "Author is required"}), 400
+    if page_progress is None:
+        return jsonify({"error": "Page progress is required"}), 400
+    if not open_library_id:
+        return jsonify({"error": "OpenLibrary ID is required"}), 400
+    
+    # Validate types
+    try:
+        page_progress = int(page_progress)
+        if page_progress < 0:
+            return jsonify({"error": "Page progress must be non-negative"}), 400
+    except (ValueError, TypeError):
+        return jsonify({"error": "Page progress must be a valid number"}), 400
+    
+    if total_pages is not None:
+        try:
+            total_pages = int(total_pages)
+            if total_pages < 0:
+                return jsonify({"error": "Total pages must be non-negative"}), 400
+        except (ValueError, TypeError):
+            return jsonify({"error": "Total pages must be a valid number"}), 400
+    
+    # Check if book already exists by OpenLibrary ID
+    book = Book.query.filter_by(open_library_id=open_library_id).first()
+    
+    if not book:
+        # Create new book
+        book = Book(
+            title=title,
+            author=author,
+            page_count=total_pages,
+            open_library_id=open_library_id
+        )
+        db.session.add(book)
+        db.session.flush()  # Get book_id without committing
+    
+    # Check if user already has this book
+    existing_user_book = UserBook.query.filter_by(
+        user_id=user_id,
+        book_id=book.book_id
+    ).first()
+    
+    if existing_user_book:
+        return jsonify({"error": "Book already in your library"}), 400
+    
+    # Create UserBook relationship
+    user_book = UserBook(
+        user_id=user_id,
+        book_id=book.book_id,
+        page_progress=page_progress
+    )
+    db.session.add(user_book)
+    db.session.commit()
+    
+    # Calculate status
+    status = calculate_status(page_progress, total_pages)
+    
+    return jsonify({
+        "title": book.title,
+        "author": book.author,
+        "status": status,
+        "open_library_id": book.open_library_id,
+        "page_progress": user_book.page_progress,
+        "total_pages": book.page_count
+    }), 201

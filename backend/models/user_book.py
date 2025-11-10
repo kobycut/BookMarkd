@@ -1,3 +1,4 @@
+from datetime import datetime
 from extensions import db
 
 class UserBook(db.Model):
@@ -6,8 +7,9 @@ class UserBook(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.user_id"), nullable=False)
     book_id = db.Column(db.Integer, db.ForeignKey("book.book_id"), nullable=False)
-    add_date = db.Column(db.Date)
-    user_rating = db.Column(db.Float)
+    add_date = db.Column(db.Date, default=datetime.today)
+    page_progress = db.Column(db.Integer, default=0, nullable=False)
+    user_rating = db.Column(db.Integer, nullable=True)
 
     user = db.relationship("User", back_populates="user_books")
     book = db.relationship("Book", back_populates="user_books")
