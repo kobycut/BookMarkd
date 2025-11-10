@@ -1616,6 +1616,110 @@
 							"body": "{\n  \"msg\": \"Missing Authorization Header\"\n}"
 						}
 					]
+				},
+				{
+					"name": "Get Books",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/books",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"books"
+							]
+						},
+						"description": "Get all books in the authenticated user's library. Returns title, author, status (wishlist/reading/read), open_library_id, page_progress, total_pages, and rating."
+					},
+					"response": [
+						{
+							"name": "Get Books Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/books",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"books"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"title\": \"The Hobbit\",\n    \"author\": \"J.R.R. Tolkien\",\n    \"status\": \"wishlist\",\n    \"open_library_id\": \"OL51709286M\",\n    \"page_progress\": 0,\n    \"total_pages\": 310,\n    \"rating\": null\n  },\n  {\n    \"title\": \"1984\",\n    \"author\": \"George Orwell\",\n    \"status\": \"reading\",\n    \"open_library_id\": \"OL1168007W\",\n    \"page_progress\": 150,\n    \"total_pages\": 328,\n    \"rating\": null\n  },\n  {\n    \"title\": \"To Kill a Mockingbird\",\n    \"author\": \"Harper Lee\",\n    \"status\": \"read\",\n    \"open_library_id\": \"OL26965W\",\n    \"page_progress\": 281,\n    \"total_pages\": 281,\n    \"rating\": 5\n  }\n]"
+						},
+						{
+							"name": "Get Books - Empty Library",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/books",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"books"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[]"
+						},
+						{
+							"name": "Get Books - Unauthorized",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/books",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"books"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"msg\": \"Missing Authorization Header\"\n}"
+						}
+					]
 				}
 			],
 			"description": "Endpoints for managing books in user's library",

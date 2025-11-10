@@ -53,3 +53,14 @@ endpoints:
     description: "Delete a specific goal by ID"
     path: "/api/goals/{goal_id}"
     method: "DELETE"
+  
+  # Books Endpoints
+  - name: "Create Book"
+    description: "Add a new book to the authenticated user's library with title, author, page progress, optional OpenLibrary ID, and optional total pages"
+    path: "/api/books"
+    method: "POST"
+  
+  - name: "Get All Books"
+    description: "Retrieve all books in the authenticated user's library with status (wishlist/reading/read), progress, and ratings"
+    path: "/api/books"
+    method: "GET"

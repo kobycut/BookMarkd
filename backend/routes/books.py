@@ -117,3 +117,34 @@ def create_book():
         "page_progress": user_book.page_progress,
         "total_pages": book.page_count
     }), 201
+
+
+@books_bp.route("/books", methods=["GET"])
+@jwt_required()
+def get_books():
+    """
+    Get all books in the authenticated user's library.
+    
+    Returns: Array of books with title, author, status, open_library_id, page_progress, total_pages, rating
+    """
+    user_id = get_jwt_identity()
+    
+    # Get all user's books with their relationship data
+    user_books = UserBook.query.filter_by(user_id=user_id).all()
+    
+    books_list = []
+    for user_book in user_books:
+        book = user_book.book
+        status = calculate_status(user_book.page_progress, book.page_count)
+        
+        books_list.append({
+            "title": book.title,
+            "author": book.author,
+            "status": status,
+            "open_library_id": book.open_library_id,
+            "page_progress": user_book.page_progress,
+            "total_pages": book.page_count,
+            "rating": user_book.user_rating
+        })
+    
+    return jsonify(books_list), 200
