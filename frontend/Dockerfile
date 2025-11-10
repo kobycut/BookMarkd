@@ -13,6 +13,10 @@ RUN npm install
 # Copy the rest of the application files to the working directory
 COPY . .
 
+# Accept build argument and set as environment variable
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+
 # Build the application
 RUN npm run build
 
