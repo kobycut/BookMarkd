@@ -202,7 +202,7 @@ def get_goals():
             goals_list.append({
                 'id': goal.goal_id,
                 'description': goal.description,
-                'progress': 0,  # TODO: Calculate actual progress from user_books
+                'progress': goal.progress,
                 'total': goal.num_books,
                 'duration': duration or 'unknown',
                 'due_date': due_date.isoformat() if due_date else None,
@@ -217,7 +217,7 @@ def get_goals():
             goals_list.append({
                 'id': goal.goal_id,
                 'description': goal.description,
-                'progress': 0,  # TODO: Calculate actual progress from user_books
+                'progress': goal.progress,
                 'total': goal.num_pages,
                 'duration': duration or 'unknown',
                 'due_date': due_date.isoformat() if due_date else None,
@@ -232,7 +232,7 @@ def get_goals():
             goals_list.append({
                 'id': goal.goal_id,
                 'description': goal.description,
-                'progress': 0,  # TODO: Calculate actual progress from user_books
+                'progress': goal.progress,
                 'total': goal.num_hours,
                 'duration': duration or 'unknown',
                 'due_date': due_date.isoformat() if due_date else None,
@@ -371,9 +371,9 @@ def update_goal(goal_id):
         if not goal:
             return jsonify({'error': 'Goal not found'}), 404
         
-        # Note: Since the models don't have a progress field, we're storing it externally
-        # For now, we'll just validate and return the updated progress
-        # In a real implementation, you'd add a progress column to the models or use a separate tracking table
+        # Update the progress in the database
+        goal.progress = progress
+        db.session.commit()
         
         # Extract duration for due_date calculation
         duration = extract_duration_from_description(goal.description)
@@ -383,7 +383,7 @@ def update_goal(goal_id):
         goal_data = {
             'id': goal.goal_id,
             'description': goal.description,
-            'progress': progress,
+            'progress': goal.progress,
             'total': total,
             'duration': duration or 'unknown',
             'due_date': due_date.isoformat() if due_date else None,

@@ -7,6 +7,7 @@ class BookGoal(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.user_id"), nullable=False)
     description = db.Column(db.String(255))
     num_books = db.Column(db.Integer)
+    progress = db.Column(db.Float, default=0.0, nullable=False)
 
     user = db.relationship("User", back_populates="book_goals")
 
