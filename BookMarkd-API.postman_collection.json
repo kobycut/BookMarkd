@@ -799,6 +799,128 @@
 							"body": "{\n  \"msg\": \"Missing Authorization Header\"\n}"
 						}
 					]
+				},
+				{
+					"name": "Get All Goals",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/goals",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"goals"
+							]
+						},
+						"description": "Get all reading goals for the authenticated user with progress tracking"
+					},
+					"response": [
+						{
+							"name": "Get Goals Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/goals",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"goals"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"goals\": [\n    {\n      \"id\": 1,\n      \"description\": \"Read 50 books for 2025\",\n      \"progress\": 0,\n      \"total\": 50,\n      \"duration\": \"this year\",\n      \"due_date\": \"2025-12-31T23:59:59\",\n      \"type\": \"books read\"\n    },\n    {\n      \"id\": 2,\n      \"description\": \"Read 1000 pages for November 2025\",\n      \"progress\": 0,\n      \"total\": 1000,\n      \"duration\": \"this month\",\n      \"due_date\": \"2025-11-30T23:59:59\",\n      \"type\": \"pages read\"\n    },\n    {\n      \"id\": 3,\n      \"description\": \"Read 10 hours for week of Nov 10 - Nov 16, 2025\",\n      \"progress\": 0,\n      \"total\": 10,\n      \"duration\": \"this week\",\n      \"due_date\": \"2025-11-16T23:59:59\",\n      \"type\": \"hours read\"\n    }\n  ],\n  \"total_count\": 3\n}"
+						},
+						{
+							"name": "Get Goals - Empty",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/goals",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"goals"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"goals\": [],\n  \"total_count\": 0\n}"
+						},
+						{
+							"name": "Get Goals - Unauthorized",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/goals",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"goals"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"msg\": \"Missing Authorization Header\"\n}"
+						}
+					]
 				}
 			],
 			"description": "Endpoints for managing reading goals",

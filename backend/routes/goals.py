@@ -3,11 +3,41 @@ from models import BookGoal, PageGoal, HourGoal, User
 from extensions import db
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime, timedelta
+from calendar import monthrange
 
 goals_bp = Blueprint('goals', __name__)
 
 VALID_GOAL_TYPES = ['books read', 'pages read', 'hours read']
 VALID_DURATIONS = ['this year', 'this month', 'this week', 'next year', 'next month', 'next week']
+
+def calculate_due_date(duration):
+    """Calculate the due date based on the duration"""
+    now = datetime.now()
+    
+    if duration == 'this year':
+        return datetime(now.year, 12, 31, 23, 59, 59)
+    elif duration == 'this month':
+        last_day = monthrange(now.year, now.month)[1]
+        return datetime(now.year, now.month, last_day, 23, 59, 59)
+    elif duration == 'this week':
+        # End of week (Sunday)
+        days_until_sunday = 6 - now.weekday()
+        end_of_week = now + timedelta(days=days_until_sunday)
+        return datetime(end_of_week.year, end_of_week.month, end_of_week.day, 23, 59, 59)
+    elif duration == 'next year':
+        return datetime(now.year + 1, 12, 31, 23, 59, 59)
+    elif duration == 'next month':
+        next_month = now.month + 1 if now.month < 12 else 1
+        year = now.year if now.month < 12 else now.year + 1
+        last_day = monthrange(year, next_month)[1]
+        return datetime(year, next_month, last_day, 23, 59, 59)
+    elif duration == 'next week':
+        # Next week's Sunday
+        days_until_next_sunday = 6 - now.weekday() + 7
+        end_of_next_week = now + timedelta(days=days_until_next_sunday)
+        return datetime(end_of_next_week.year, end_of_next_week.month, end_of_next_week.day, 23, 59, 59)
+    
+    return None
 
 def calculate_duration_description(duration):
     """Generate a description based on the duration"""
@@ -116,22 +146,20 @@ def create_goal():
         db.session.add(goal)
         db.session.commit()
         
+        # Calculate due date
+        due_date = calculate_due_date(duration)
+        
         # Prepare response based on goal type
         goal_data = {
             'id': goal.goal_id,
             'user_id': goal.user_id,
             'description': goal.description,
             'type': goal_type,
-            'duration': duration
+            'duration': duration,
+            'due_date': due_date.isoformat() if due_date else None,
+            'progress': 0,
+            'total': amount
         }
-        
-        # Add the specific amount field
-        if goal_type == 'books read':
-            goal_data['num_books'] = goal.num_books
-        elif goal_type == 'pages read':
-            goal_data['num_pages'] = goal.num_pages
-        elif goal_type == 'hours read':
-            goal_data['num_hours'] = goal.num_hours
         
         return jsonify({
             'message': 'Goal created successfully',
@@ -141,3 +169,94 @@ def create_goal():
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': f'Failed to create goal: {str(e)}'}), 500
+
+@goals_bp.route('/goals', methods=['GET'])
+@jwt_required()
+def get_goals():
+    """Get all goals for the authenticated user"""
+    user_id = get_jwt_identity()
+    try:
+        user_id = int(user_id)
+    except (TypeError, ValueError):
+        return jsonify({'error': 'Invalid token subject'}), 422
+    
+    # Verify user exists
+    user = db.session.get(User, user_id)
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    
+    try:
+        # Fetch all goals for the user
+        book_goals = BookGoal.query.filter_by(user_id=user_id).all()
+        page_goals = PageGoal.query.filter_by(user_id=user_id).all()
+        hour_goals = HourGoal.query.filter_by(user_id=user_id).all()
+        
+        goals_list = []
+        
+        # Process book goals
+        for goal in book_goals:
+            # Extract duration from description
+            duration = extract_duration_from_description(goal.description)
+            due_date = calculate_due_date(duration) if duration else None
+            
+            goals_list.append({
+                'id': goal.goal_id,
+                'description': goal.description,
+                'progress': 0,  # TODO: Calculate actual progress from user_books
+                'total': goal.num_books,
+                'duration': duration or 'unknown',
+                'due_date': due_date.isoformat() if due_date else None,
+                'type': 'books read'
+            })
+        
+        # Process page goals
+        for goal in page_goals:
+            duration = extract_duration_from_description(goal.description)
+            due_date = calculate_due_date(duration) if duration else None
+            
+            goals_list.append({
+                'id': goal.goal_id,
+                'description': goal.description,
+                'progress': 0,  # TODO: Calculate actual progress from user_books
+                'total': goal.num_pages,
+                'duration': duration or 'unknown',
+                'due_date': due_date.isoformat() if due_date else None,
+                'type': 'pages read'
+            })
+        
+        # Process hour goals
+        for goal in hour_goals:
+            duration = extract_duration_from_description(goal.description)
+            due_date = calculate_due_date(duration) if duration else None
+            
+            goals_list.append({
+                'id': goal.goal_id,
+                'description': goal.description,
+                'progress': 0,  # TODO: Calculate actual progress from user_books
+                'total': goal.num_hours,
+                'duration': duration or 'unknown',
+                'due_date': due_date.isoformat() if due_date else None,
+                'type': 'hours read'
+            })
+        
+        return jsonify({
+            'goals': goals_list,
+            'total_count': len(goals_list)
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': f'Failed to retrieve goals: {str(e)}'}), 500
+
+def extract_duration_from_description(description):
+    """Extract duration from goal description"""
+    if not description:
+        return None
+    
+    description_lower = description.lower()
+    
+    # Check for duration keywords in order of specificity
+    for duration in VALID_DURATIONS:
+        if duration in description_lower:
+            return duration
+    
+    return None
