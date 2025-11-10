@@ -110,6 +110,7 @@ def create_book():
     status = calculate_status(page_progress, total_pages)
     
     return jsonify({
+        "id": book.book_id,
         "title": book.title,
         "author": book.author,
         "status": status,
@@ -138,6 +139,7 @@ def get_books():
         status = calculate_status(user_book.page_progress, book.page_count)
         
         books_list.append({
+            "id": book.book_id,
             "title": book.title,
             "author": book.author,
             "status": status,

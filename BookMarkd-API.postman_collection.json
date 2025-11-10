@@ -1428,7 +1428,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n  \"title\": \"The Hobbit\",\n  \"author\": \"J.R.R. Tolkien\",\n  \"status\": \"wishlist\",\n  \"open_library_id\": \"OL51709286M\",\n  \"page_progress\": 0,\n  \"total_pages\": 310\n}"
+							"body": "{\n  \"id\": 1,\n  \"title\": \"The Hobbit\",\n  \"author\": \"J.R.R. Tolkien\",\n  \"status\": \"wishlist\",\n  \"open_library_id\": \"OL51709286M\",\n  \"page_progress\": 0,\n  \"total_pages\": 310\n}"
 						},
 						{
 							"name": "Create Book - Reading",
@@ -1465,7 +1465,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n  \"title\": \"1984\",\n  \"author\": \"George Orwell\",\n  \"status\": \"reading\",\n  \"open_library_id\": \"OL1168007W\",\n  \"page_progress\": 150,\n  \"total_pages\": 328\n}"
+							"body": "{\n  \"id\": 2,\n  \"title\": \"1984\",\n  \"author\": \"George Orwell\",\n  \"status\": \"reading\",\n  \"open_library_id\": \"OL1168007W\",\n  \"page_progress\": 150,\n  \"total_pages\": 328\n}"
 						},
 						{
 							"name": "Create Book - Finished",
@@ -1502,7 +1502,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n  \"title\": \"To Kill a Mockingbird\",\n  \"author\": \"Harper Lee\",\n  \"status\": \"read\",\n  \"open_library_id\": \"OL26965W\",\n  \"page_progress\": 281,\n  \"total_pages\": 281\n}"
+							"body": "{\n  \"id\": 3,\n  \"title\": \"To Kill a Mockingbird\",\n  \"author\": \"Harper Lee\",\n  \"status\": \"read\",\n  \"open_library_id\": \"OL26965W\",\n  \"page_progress\": 281,\n  \"total_pages\": 281\n}"
 						},
 						{
 							"name": "Create Book - Missing Title",
@@ -1661,7 +1661,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "[\n  {\n    \"title\": \"The Hobbit\",\n    \"author\": \"J.R.R. Tolkien\",\n    \"status\": \"wishlist\",\n    \"open_library_id\": \"OL51709286M\",\n    \"page_progress\": 0,\n    \"total_pages\": 310,\n    \"rating\": null\n  },\n  {\n    \"title\": \"1984\",\n    \"author\": \"George Orwell\",\n    \"status\": \"reading\",\n    \"open_library_id\": \"OL1168007W\",\n    \"page_progress\": 150,\n    \"total_pages\": 328,\n    \"rating\": null\n  },\n  {\n    \"title\": \"To Kill a Mockingbird\",\n    \"author\": \"Harper Lee\",\n    \"status\": \"read\",\n    \"open_library_id\": \"OL26965W\",\n    \"page_progress\": 281,\n    \"total_pages\": 281,\n    \"rating\": 5\n  }\n]"
+							"body": "[\n  {\n    \"id\": 1,\n    \"title\": \"The Hobbit\",\n    \"author\": \"J.R.R. Tolkien\",\n    \"status\": \"wishlist\",\n    \"open_library_id\": \"OL51709286M\",\n    \"page_progress\": 0,\n    \"total_pages\": 310,\n    \"rating\": null\n  },\n  {\n    \"id\": 2,\n    \"title\": \"1984\",\n    \"author\": \"George Orwell\",\n    \"status\": \"reading\",\n    \"open_library_id\": \"OL1168007W\",\n    \"page_progress\": 150,\n    \"total_pages\": 328,\n    \"rating\": null\n  },\n  {\n    \"id\": 3,\n    \"title\": \"To Kill a Mockingbird\",\n    \"author\": \"Harper Lee\",\n    \"status\": \"read\",\n    \"open_library_id\": \"OL26965W\",\n    \"page_progress\": 281,\n    \"total_pages\": 281,\n    \"rating\": 5\n  }\n]"
 						},
 						{
 							"name": "Get Books - Empty Library",
