@@ -1378,7 +1378,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"title\": \"The Hobbit\",\n  \"author\": \"J.R.R. Tolkien\",\n  \"page_progress\": 0,\n  \"open_library_key\": \"OL27482W\",\n  \"total_pages\": 310\n}"
+							"raw": "{\n  \"title\": \"The Hobbit\",\n  \"author\": \"J.R.R. Tolkien\",\n  \"page_progress\": 0,\n  \"open_library_key\": \"OL51709286M\",\n  \"total_pages\": 310\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/books",
@@ -1405,7 +1405,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"title\": \"The Hobbit\",\n  \"author\": \"J.R.R. Tolkien\",\n  \"page_progress\": 0,\n  \"open_library_key\": \"OL27482W\",\n  \"total_pages\": 310\n}"
+									"raw": "{\n  \"title\": \"The Hobbit\",\n  \"author\": \"J.R.R. Tolkien\",\n  \"page_progress\": 0,\n  \"open_library_key\": \"OL51709286M\",\n  \"total_pages\": 310\n}"
 								},
 								"url": {
 									"raw": "{{base_url}}/api/books",
@@ -1428,7 +1428,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n  \"title\": \"The Hobbit\",\n  \"author\": \"J.R.R. Tolkien\",\n  \"status\": \"wishlist\",\n  \"open_library_key\": \"OL27482W\",\n  \"page_progress\": 0,\n  \"total_pages\": 310\n}"
+							"body": "{\n  \"title\": \"The Hobbit\",\n  \"author\": \"J.R.R. Tolkien\",\n  \"status\": \"wishlist\",\n  \"open_library_key\": \"OL51709286M\",\n  \"page_progress\": 0,\n  \"total_pages\": 310\n}"
 						},
 						{
 							"name": "Create Book - Reading",
@@ -1553,7 +1553,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"title\": \"The Hobbit\",\n  \"author\": \"J.R.R. Tolkien\",\n  \"page_progress\": 0,\n  \"open_library_key\": \"OL27482W\",\n  \"total_pages\": 310\n}"
+									"raw": "{\n  \"title\": \"The Hobbit\",\n  \"author\": \"J.R.R. Tolkien\",\n  \"page_progress\": 0,\n  \"open_library_key\": \"OL51709286M\",\n  \"total_pages\": 310\n}"
 								},
 								"url": {
 									"raw": "{{base_url}}/api/books",
@@ -1590,7 +1590,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"title\": \"The Hobbit\",\n  \"author\": \"J.R.R. Tolkien\",\n  \"page_progress\": 0,\n  \"open_library_key\": \"OL27482W\",\n  \"total_pages\": 310\n}"
+									"raw": "{\n  \"title\": \"The Hobbit\",\n  \"author\": \"J.R.R. Tolkien\",\n  \"page_progress\": 0,\n  \"open_library_key\": \"OL51709286M\",\n  \"total_pages\": 310\n}"
 								},
 								"url": {
 									"raw": "{{base_url}}/api/books",
