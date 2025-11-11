@@ -74,9 +74,9 @@
 									"if (pm.response.code === 201) {",
 									"    const responseJson = pm.response.json();",
 									"    if (responseJson.token) {",
-									"        pm.environment.set('auth_token', responseJson.token);",
-									"        pm.environment.set('user_id', responseJson.user.id);",
-									"        pm.environment.set('username', responseJson.user.username);",
+									"        pm.collectionVariables.set('auth_token', responseJson.token);",
+									"        pm.collectionVariables.set('user_id', responseJson.user.id);",
+									"        pm.collectionVariables.set('username', responseJson.user.username);",
 									"    }",
 									"}"
 								],
