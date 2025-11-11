@@ -219,12 +219,16 @@ def update_book_progress(book_id):
     if not user_book:
         return jsonify({"error": "Book not found in your library"}), 404
     
+    # Validate that page_progress does not exceed total pages
+    book = user_book.book
+    if page_progress > book.page_count:
+        return jsonify({"error": "Page progress cannot exceed total pages"}), 400
+    
     # Update progress
     user_book.page_progress = page_progress
     db.session.commit()
     
     # Get book details and calculate status
-    book = user_book.book
     status = calculate_status(user_book.page_progress, book.page_count)
     
     return jsonify({
