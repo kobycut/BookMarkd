@@ -31,8 +31,8 @@ def create_book():
     """
     Create a new book for the authenticated user.
     
-    Required params: title, author, page_progress
-    Optional params: open_library_id, total_pages
+    Required params: title, author
+    Optional params: page_progress (default: 0), open_library_id, total_pages
     
     Returns: title, author, status, open_library_id, page_progress, total_pages
     """
@@ -45,7 +45,7 @@ def create_book():
     
     title = data.get("title")
     author = data.get("author")
-    page_progress = data.get("page_progress")
+    page_progress = data.get("page_progress", 0)  # Default to 0
     open_library_id = data.get("open_library_id")
     total_pages = data.get("total_pages")
     
@@ -53,8 +53,6 @@ def create_book():
         return jsonify({"error": "Title is required"}), 400
     if not author:
         return jsonify({"error": "Author is required"}), 400
-    if page_progress is None:
-        return jsonify({"error": "Page progress is required"}), 400
     
     # Validate types
     try:
