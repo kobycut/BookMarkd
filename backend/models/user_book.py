@@ -9,7 +9,7 @@ class UserBook(db.Model):
     book_id = db.Column(db.Integer, db.ForeignKey("book.book_id"), nullable=False)
     add_date = db.Column(db.Date, default=datetime.today)
     page_progress = db.Column(db.Integer, default=0, nullable=False)
-    user_rating = db.Column(db.Integer, nullable=True)
+    user_rating = db.Column(db.Float, nullable=True)
 
     user = db.relationship("User", back_populates="user_books")
     book = db.relationship("Book", back_populates="user_books")
