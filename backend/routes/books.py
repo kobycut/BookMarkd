@@ -66,8 +66,8 @@ def create_book():
     
     try:
         total_pages = int(total_pages)
-        if total_pages < 0:
-            return jsonify({"error": "Total pages must be non-negative"}), 400
+        if total_pages <= 0:
+            return jsonify({"error": "Total pages must be positive"}), 400
     except (ValueError, TypeError):
         return jsonify({"error": "Total pages must be a valid number"}), 400
     
