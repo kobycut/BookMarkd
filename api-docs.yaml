@@ -56,7 +56,7 @@ endpoints:
   
   # Books Endpoints
   - name: "Create Book"
-    description: "Add a new book to the authenticated user's library with title, author, page progress, optional OpenLibrary ID, and optional total pages"
+    description: "Add a new book to the authenticated user's library with title, author, and total pages (required). Optional: page_progress (defaults to 0) and open_library_id (used for cover image retrieval)"
     path: "/api/books"
     method: "POST"
   
