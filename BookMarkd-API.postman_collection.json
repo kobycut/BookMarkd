@@ -1835,6 +1835,239 @@
 							"body": "{\n  \"msg\": \"Missing Authorization Header\"\n}"
 						}
 					]
+				},
+				{
+					"name": "Update Book Progress",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page_progress\": 150\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/books/:book_id/progress",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"books",
+								":book_id",
+								"progress"
+							],
+							"variable": [
+								{
+									"key": "book_id",
+									"value": "1",
+									"description": "The ID of the book to update"
+								}
+							]
+						},
+						"description": "Update the reading progress (page number) for a book in the user's library. Returns all book details with updated status."
+					},
+					"response": [
+						{
+							"name": "Update Book Progress Success",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"page_progress\": 150\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/books/2/progress",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"books",
+										"2",
+										"progress"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 2,\n  \"title\": \"1984\",\n  \"author\": \"George Orwell\",\n  \"status\": \"reading\",\n  \"open_library_id\": \"OL1168007W\",\n  \"page_progress\": 150,\n  \"total_pages\": 328,\n  \"rating\": null\n}"
+						},
+						{
+							"name": "Update Book Progress - Completed",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"page_progress\": 328\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/books/2/progress",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"books",
+										"2",
+										"progress"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 2,\n  \"title\": \"1984\",\n  \"author\": \"George Orwell\",\n  \"status\": \"read\",\n  \"open_library_id\": \"OL1168007W\",\n  \"page_progress\": 328,\n  \"total_pages\": 328,\n  \"rating\": null\n}"
+						},
+						{
+							"name": "Update Book Progress - Not Found",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"page_progress\": 150\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/books/999/progress",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"books",
+										"999",
+										"progress"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"Book not found in your library\"\n}"
+						},
+						{
+							"name": "Update Book Progress - Missing Progress",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/books/2/progress",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"books",
+										"2",
+										"progress"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"Page progress is required\"\n}"
+						},
+						{
+							"name": "Update Book Progress - Unauthorized",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"page_progress\": 150\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/books/2/progress",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"books",
+										"2",
+										"progress"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"msg\": \"Missing Authorization Header\"\n}"
+						}
+					]
 				}
 			],
 			"description": "Endpoints for managing books in user's library",

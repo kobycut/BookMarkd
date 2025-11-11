@@ -177,3 +177,60 @@ def delete_book(book_id):
     db.session.commit()
     
     return jsonify({"message": "Book removed from library"}), 200
+
+
+@books_bp.route("/books/<int:book_id>/progress", methods=["PUT"])
+@jwt_required()
+def update_book_progress(book_id):
+    """
+    Update the reading progress for a book.
+    
+    Params: book_id (in URL), page_progress (in body)
+    Returns: All book details with updated status
+    """
+    user_id = get_jwt_identity()
+    data = request.get_json()
+    
+    if not data:
+        return jsonify({"error": "Request body is required"}), 400
+    
+    page_progress = data.get("page_progress")
+    
+    if page_progress is None:
+        return jsonify({"error": "Page progress is required"}), 400
+    
+    # Validate type
+    try:
+        page_progress = int(page_progress)
+        if page_progress < 0:
+            return jsonify({"error": "Page progress must be non-negative"}), 400
+    except (ValueError, TypeError):
+        return jsonify({"error": "Page progress must be a valid number"}), 400
+    
+    # Find the user's book relationship
+    user_book = UserBook.query.filter_by(
+        user_id=user_id,
+        book_id=book_id
+    ).first()
+    
+    if not user_book:
+        return jsonify({"error": "Book not found in your library"}), 404
+    
+    # Update progress
+    user_book.page_progress = page_progress
+    db.session.commit()
+    
+    # Get book details and calculate status
+    book = user_book.book
+    status = calculate_status(user_book.page_progress, book.page_count)
+    
+    return jsonify({
+        "id": book.book_id,
+        "title": book.title,
+        "author": book.author,
+        "status": status,
+        "open_library_id": book.open_library_id,
+        "page_progress": user_book.page_progress,
+        "total_pages": book.page_count,
+        "rating": user_book.user_rating
+    }), 200

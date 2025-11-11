@@ -69,3 +69,8 @@ endpoints:
     description: "Remove a book from the authenticated user's library by book ID"
     path: "/api/books/{book_id}"
     method: "DELETE"
+  
+  - name: "Update Book Progress"
+    description: "Update the reading progress (page number) for a book and get updated details with recalculated status"
+    path: "/api/books/{book_id}/progress"
+    method: "PUT"
