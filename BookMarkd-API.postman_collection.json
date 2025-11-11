@@ -2068,6 +2068,278 @@
 							"body": "{\n  \"msg\": \"Missing Authorization Header\"\n}"
 						}
 					]
+				},
+				{
+					"name": "Update Book Rating",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"rating\": 4.5\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/books/:book_id/rating",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"books",
+								":book_id",
+								"rating"
+							],
+							"variable": [
+								{
+									"key": "book_id",
+									"value": "3",
+									"description": "The ID of the book to rate"
+								}
+							]
+						},
+						"description": "Add or update a rating (0-5) for a completed book. Only works for books with 'read' status (page_progress >= total_pages)."
+					},
+					"response": [
+						{
+							"name": "Update Book Rating Success",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"rating\": 4.5\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/books/3/rating",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"books",
+										"3",
+										"rating"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 3,\n  \"title\": \"To Kill a Mockingbird\",\n  \"author\": \"Harper Lee\",\n  \"status\": \"read\",\n  \"open_library_id\": \"OL26965W\",\n  \"page_progress\": 281,\n  \"total_pages\": 281,\n  \"rating\": 4.5\n}"
+						},
+						{
+							"name": "Update Book Rating - Not Read",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"rating\": 4.0\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/books/2/rating",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"books",
+										"2",
+										"rating"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"Can only rate books with 'read' status\"\n}"
+						},
+						{
+							"name": "Update Book Rating - Invalid Range",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"rating\": 6.0\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/books/3/rating",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"books",
+										"3",
+										"rating"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"Rating must be between 0 and 5\"\n}"
+						},
+						{
+							"name": "Update Book Rating - Not Found",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"rating\": 4.5\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/books/999/rating",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"books",
+										"999",
+										"rating"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"Book not found in your library\"\n}"
+						},
+						{
+							"name": "Update Book Rating - Missing Rating",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/books/3/rating",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"books",
+										"3",
+										"rating"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"Rating is required\"\n}"
+						},
+						{
+							"name": "Update Book Rating - Unauthorized",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"rating\": 4.5\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/books/3/rating",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"books",
+										"3",
+										"rating"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"msg\": \"Missing Authorization Header\"\n}"
+						}
+					]
 				}
 			],
 			"description": "Endpoints for managing books in user's library",

@@ -234,3 +234,63 @@ def update_book_progress(book_id):
         "total_pages": book.page_count,
         "rating": user_book.user_rating
     }), 200
+
+
+@books_bp.route("/books/<int:book_id>/rating", methods=["PUT"])
+@jwt_required()
+def update_book_rating(book_id):
+    """
+    Update the rating for a completed book.
+    
+    Params: book_id (in URL), rating (in body, 0-5)
+    Returns: All book details with updated rating
+    """
+    user_id = get_jwt_identity()
+    data = request.get_json()
+    
+    if not data:
+        return jsonify({"error": "Request body is required"}), 400
+    
+    rating = data.get("rating")
+    
+    if rating is None:
+        return jsonify({"error": "Rating is required"}), 400
+    
+    # Validate type and range
+    try:
+        rating = float(rating)
+        if rating < 0 or rating > 5:
+            return jsonify({"error": "Rating must be between 0 and 5"}), 400
+    except (ValueError, TypeError):
+        return jsonify({"error": "Rating must be a valid number"}), 400
+    
+    # Find the user's book relationship
+    user_book = UserBook.query.filter_by(
+        user_id=user_id,
+        book_id=book_id
+    ).first()
+    
+    if not user_book:
+        return jsonify({"error": "Book not found in your library"}), 404
+    
+    # Get book details and check if book is completed
+    book = user_book.book
+    status = calculate_status(user_book.page_progress, book.page_count)
+    
+    if status != "read":
+        return jsonify({"error": "Can only rate books with 'read' status"}), 400
+    
+    # Update rating
+    user_book.user_rating = rating
+    db.session.commit()
+    
+    return jsonify({
+        "id": book.book_id,
+        "title": book.title,
+        "author": book.author,
+        "status": status,
+        "open_library_id": book.open_library_id,
+        "page_progress": user_book.page_progress,
+        "total_pages": book.page_count,
+        "rating": user_book.user_rating
+    }), 200

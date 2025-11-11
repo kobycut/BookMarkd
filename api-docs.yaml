@@ -74,3 +74,8 @@ endpoints:
     description: "Update the reading progress (page number) for a book and get updated details with recalculated status"
     path: "/api/books/{book_id}/progress"
     method: "PUT"
+  
+  - name: "Update Book Rating"
+    description: "Add or update a rating (0-5) for a completed book. Only works for books with 'read' status"
+    path: "/api/books/{book_id}/rating"
+    method: "PUT"
