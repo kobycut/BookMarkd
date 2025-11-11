@@ -71,6 +71,10 @@ def create_book():
     except (ValueError, TypeError):
         return jsonify({"error": "Total pages must be a valid number"}), 400
     
+    # Ensure page_progress does not exceed total_pages
+    if page_progress > total_pages:
+        return jsonify({"error": "Page progress cannot exceed total pages"}), 400
+    
     # Check if book already exists by OpenLibrary ID (if provided)
     book = None
     if open_library_id:
