@@ -150,3 +150,30 @@ def get_books():
         })
     
     return jsonify(books_list), 200
+
+
+@books_bp.route("/books/<int:book_id>", methods=["DELETE"])
+@jwt_required()
+def delete_book(book_id):
+    """
+    Delete a book from the authenticated user's library.
+    
+    Params: book_id (in URL)
+    Returns: Success message
+    """
+    user_id = get_jwt_identity()
+    
+    # Find the user's book relationship
+    user_book = UserBook.query.filter_by(
+        user_id=user_id,
+        book_id=book_id
+    ).first()
+    
+    if not user_book:
+        return jsonify({"error": "Book not found in your library"}), 404
+    
+    # Delete the user-book relationship
+    db.session.delete(user_book)
+    db.session.commit()
+    
+    return jsonify({"message": "Book removed from library"}), 200

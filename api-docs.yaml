@@ -64,3 +64,8 @@ endpoints:
     description: "Retrieve all books in the authenticated user's library with status (wishlist/reading/read), progress, and ratings"
     path: "/api/books"
     method: "GET"
+  
+  - name: "Delete Book"
+    description: "Remove a book from the authenticated user's library by book ID"
+    path: "/api/books/{book_id}"
+    method: "DELETE"
