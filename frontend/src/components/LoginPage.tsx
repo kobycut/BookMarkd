@@ -5,6 +5,7 @@ import { Label } from './ui/label';
 import { Eye, EyeOff, BookMarked } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useUser } from '../context/UserContext';
+import { api } from '../api/client';
 
 export function LoginPage() {
   const { setUser } = useUser();
@@ -16,8 +17,6 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  const API_URL = (import.meta.env.VITE_API_URL || '');
-
   const isValid = isSignup
     ? (name.trim() && email.trim() && password)
     : (email.trim() && password);
@@ -27,44 +26,20 @@ export function LoginPage() {
     setSubmitting(true);
 
     try {
-      const endpoint = isSignup ? '/api/auth/register' : '/api/auth/login';
-      const payload: Record<string, unknown> = {
-        email: email.trim().toLowerCase(),
-        password,
-      };
-      if (isSignup)
-        payload['username'] = name.trim();
-
-      const res = await fetch(`${API_URL}${endpoint}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        const msg = (data && (data.error || data.message)) || res.statusText || 'Unknown error';
-        toast.error(String(msg));
-        setSubmitting(false);
-        return;
+      let result;
+      if (isSignup) {
+        result = await api.register(email.trim(), password, name.trim());
+      } else {
+        result = await api.login(email.trim(), password);
       }
 
-      const token = data?.token;
-      if (!token) {
-        toast.error('No token returned from server');
-        setSubmitting(false);
-        return;
-      }
       // TODO - consider more secure storage for production, like sending httpOnly cookies from backend
-      localStorage.setItem('token', token);
-
-      if (data?.user)
-        setUser(data.user);
-
+      localStorage.setItem('token', result.token);
+      setUser(result.user);
+      toast.success(`Welcome ${result.user.username}!`);
       setSubmitting(false);
     } catch (err: any) {
-      toast.error(err?.message || 'Network error');
+      // Error already toasted by api client
       setSubmitting(false);
     }
   };

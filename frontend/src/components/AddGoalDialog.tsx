@@ -17,8 +17,7 @@ import {
   SelectValue,
 } from './ui/select';
 import toast from 'react-hot-toast';
-
-  const API_URL = (import.meta.env.VITE_API_URL || '');
+import { api } from '../api/client';
 
 interface AddGoalDialogProps {
   open: boolean;
@@ -40,26 +39,14 @@ export function AddGoalDialog({ open, onOpenChange }: AddGoalDialogProps) {
 
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`${API_URL}/api/goals`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({
-          amount: Number(amount),
-          type,
-          duration,
-        }),
-      });
-      if (!res.ok) {
-        toast.error('Failed to create goal');
-        return;
-      }
-
+      await api.createGoal(type, Number(amount), duration);
+      toast.success('Goal created successfully');
       onOpenChange(false);
       setAmount('');
+      setType('books read');
+      setDuration('this month');
+    } catch (err: any) {
+      // Error already toasted by api client
     } finally {
       setLoading(false);
     }

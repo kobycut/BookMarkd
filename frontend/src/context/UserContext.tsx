@@ -1,4 +1,5 @@
 import { createContext, useState, useContext, type ReactNode, useEffect } from 'react';
+import { api } from '../api/client';
 
 type User = { username: string; email: string } | null;
 
@@ -20,59 +21,19 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const verifyToken = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setLoading(false);
-        return;
+      const result = await api.verifyToken();
+      if (result?.user) {
+        setUser(result.user);
       }
-
-      try {
-        const API_URL = import.meta.env.VITE_API_URL || '';
-        const res = await fetch(`${API_URL}/api/auth/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (res.ok) {
-          const data = await res.json().catch(() => ({}));
-          if (data.user) {
-            setUser(data.user);
-          }
-        } else {
-          localStorage.removeItem('token');
-        }
-      } catch (err) {
-        console.error('Error verifying token:', err);
-        localStorage.removeItem('token');
-      } finally {
-        setLoading(false);
-      }
+      setLoading(false);
     };
 
     verifyToken();
   }, []);
 
   const logout = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    try {
-      const API_URL = import.meta.env.VITE_API_URL || '';
-      await fetch(`${API_URL}/api/auth/logout`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-    } catch (err) {
-      console.error('Logout error:', err);
-    } finally {
-      localStorage.removeItem('token');
-      setUser(null);
-    }
+    await api.logout();
+    setUser(null);
   };
 
   return (

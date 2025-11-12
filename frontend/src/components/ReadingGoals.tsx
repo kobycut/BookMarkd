@@ -6,6 +6,7 @@ import { GoalCard } from './GoalCard';
 import { toast } from 'react-hot-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "./ui/input";
+import { api } from '../api/client';
 
 
 export interface Goal {
@@ -24,33 +25,22 @@ export function ReadingGoals() {
   const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
   const [progressValue, setProgressValue] = useState("");
   const [deletingGoal, setDeletingGoal] = useState<Goal | null>(null);
-  const API_URL = import.meta.env.VITE_API_URL || '';
 
   const loadGoals = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
-
-      const res = await fetch(`${API_URL}/api/goals`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) throw new Error('Failed to fetch goals');
-      const data = await res.json();
-
-      const mapped = data.goals.map((g: Goal): Goal => ({
+      const data = await api.getGoals();
+      const mapped = data.goals.map((g): Goal => ({
         id: g.id,
         description: g.description,
-        type: g.type,
+        type: g.type as GoalType,
         duration: g.duration,
         progress: g.progress,
         total: g.total,
         due_date: g.due_date,
       }));
-
       setGoals(mapped);
     } catch (err: any) {
-      toast.error(err.message || 'Error loading goals');
+      // Error already toasted by api client
     }
   };
 
@@ -63,25 +53,13 @@ export function ReadingGoals() {
     if (!editingGoal) return;
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      const res = await fetch(`${API_URL}/api/goals/${editingGoal.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ progress: Number(progressValue) }),
-      });
-
-      if (!res.ok) throw new Error("Failed to update goal");
+      await api.updateGoalProgress(editingGoal.id, Number(progressValue));
       toast.success("Goal updated");
       setEditingGoal(null);
       setProgressValue("");
       loadGoals();
     } catch (err: any) {
-      toast.error(err.message || "Error updating goal");
+      // Error already toasted by api client
     }
   };
 
@@ -89,22 +67,12 @@ export function ReadingGoals() {
     if (!deletingGoal) return;
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      const res = await fetch(`${API_URL}/api/goals/${deletingGoal.id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) throw new Error("Failed to delete goal");
+      await api.deleteGoal(deletingGoal.id);
       toast.success("Goal deleted");
       setDeletingGoal(null);
       loadGoals();
     } catch (err: any) {
-      toast.error(err.message || "Error deleting goal");
+      // Error already toasted by api client
     }
   };
 
