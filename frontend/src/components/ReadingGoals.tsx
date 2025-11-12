@@ -1,62 +1,112 @@
-import { useState } from 'react';
-import { Card } from './ui/card';
+import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
-import { Progress } from './ui/progress';
-import { Plus, Target, Calendar, BookOpen } from 'lucide-react';
-import { AddGoalDialog } from './AddGoalDialog';
+import { Plus } from 'lucide-react';
+import { AddGoalDialog, type GoalType } from './AddGoalDialog';
+import { GoalCard } from './GoalCard';
+import { toast } from 'react-hot-toast';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "./ui/input";
 
-interface Goal {
+
+export interface Goal {
   id: number;
-  title: string;
-  type: 'books' | 'pages' | 'time';
-  current: number;
-  target: number;
-  period: string;
-  icon: typeof BookOpen;
+  description: string;
+  type: GoalType;
+  duration: string;
+  progress: number;
+  total: number;
+  due_date: string;
 }
 
-const mockGoals: Goal[] = [
-  {
-    id: 1,
-    title: 'Read 24 books this year',
-    type: 'books',
-    current: 15,
-    target: 24,
-    period: '2025',
-    icon: BookOpen,
-  },
-  {
-    id: 2,
-    title: 'Read 500 pages this month',
-    type: 'pages',
-    current: 324,
-    target: 500,
-    period: 'October',
-    icon: Target,
-  },
-  {
-    id: 3,
-    title: 'Read 2 hours this week',
-    type: 'time',
-    current: 1.5,
-    target: 2,
-    period: 'This week',
-    icon: Calendar,
-  },
-];
-
 export function ReadingGoals() {
+  const [goals, setGoals] = useState<Goal[]>([]);
   const [showAddGoal, setShowAddGoal] = useState(false);
+  const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
+  const [progressValue, setProgressValue] = useState("");
+  const [deletingGoal, setDeletingGoal] = useState<Goal | null>(null);
+  const API_URL = import.meta.env.VITE_API_URL || '';
 
-  const getProgressPercentage = (current: number, target: number) => {
-    return Math.min((current / target) * 100, 100);
+  const loadGoals = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const res = await fetch(`${API_URL}/api/goals`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) throw new Error('Failed to fetch goals');
+      const data = await res.json();
+
+      const mapped = data.goals.map((g: Goal): Goal => ({
+        id: g.id,
+        description: g.description,
+        type: g.type,
+        duration: g.duration,
+        progress: g.progress,
+        total: g.total,
+        due_date: g.due_date,
+      }));
+
+      setGoals(mapped);
+    } catch (err: any) {
+      toast.error(err.message || 'Error loading goals');
+    }
   };
 
-  // const getProgressColor = (percentage: number) => {
-  //   if (percentage >= 80) return 'bg-green-600';
-  //   if (percentage >= 50) return 'bg-blue-600';
-  //   return 'bg-gray-400';
-  // };
+  useEffect(() => {
+    loadGoals();
+  }, []);
+
+  const updateGoalProgress = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingGoal) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const res = await fetch(`${API_URL}/api/goals/${editingGoal.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ progress: Number(progressValue) }),
+      });
+
+      if (!res.ok) throw new Error("Failed to update goal");
+      toast.success("Goal updated");
+      setEditingGoal(null);
+      setProgressValue("");
+      loadGoals();
+    } catch (err: any) {
+      toast.error(err.message || "Error updating goal");
+    }
+  };
+
+  const deleteGoal = async () => {
+    if (!deletingGoal) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const res = await fetch(`${API_URL}/api/goals/${deletingGoal.id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error("Failed to delete goal");
+      toast.success("Goal deleted");
+      setDeletingGoal(null);
+      loadGoals();
+    } catch (err: any) {
+      toast.error(err.message || "Error deleting goal");
+    }
+  };
 
   return (
     <div>
@@ -74,65 +124,116 @@ export function ReadingGoals() {
       </div>
 
       <div className="space-y-4">
-        {mockGoals.map((goal) => {
-          const percentage = getProgressPercentage(goal.current, goal.target);
-          const Icon = goal.icon;
-
-          return (
-            <Card key={goal.id} className="p-5 hover:shadow-md transition-shadow">
-              <div className="flex items-start gap-3 mb-4">
-                <div className="shrink-0 w-10 h-10 rounded-lg bg-linear-to-br from-blue-100 to-green-100 flex items-center justify-center">
-                  <Icon className="w-5 h-5 text-blue-700" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-gray-900 mb-1">{goal.title}</h3>
-                  <p className="text-sm text-gray-500">{goal.period}</p>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">Progress</span>
-                  <span className="text-gray-900">
-                    {goal.type === 'time'
-                      ? `${goal.current.toFixed(1)}h / ${goal.target}h`
-                      : `${goal.current} / ${goal.target}`}
-                  </span>
-                </div>
-                <Progress value={percentage} className="h-2" />
-                <p className="text-xs text-gray-500 text-right">
-                  {percentage.toFixed(0)}% complete
-                </p>
-              </div>
-            </Card>
-          );
-        })}
+        {goals.map((goal) => (
+          <GoalCard
+            key={goal.id}
+            goal={goal}
+            onEditClick={(g, progressValue) => {
+              setEditingGoal(g);
+              setProgressValue(progressValue);
+            }}
+            onDeleteClick={(g) => setDeletingGoal(g)}
+          />
+        ))}
       </div>
 
-      {/* Insights Card */}
-      <Card className="mt-6 p-5 bg-linear-to-br from-blue-50 to-green-50 border-blue-200">
-        <h3 className="text-gray-900 mb-3">This Month</h3>
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600">Books completed</span>
-            <span className="text-gray-900">3</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600">Pages read</span>
-            <span className="text-gray-900">847</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600">Reading time</span>
-            <span className="text-gray-900">12.5 hrs</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600">Current streak</span>
-            <span className="text-gray-900">7 days 🔥</span>
-          </div>
-        </div>
-      </Card>
+      <AddGoalDialog
+        open={showAddGoal}
+        onOpenChange={(open) => {
+          setShowAddGoal(open);
+          if (!open) loadGoals();
+        }}
+      />
 
-      <AddGoalDialog open={showAddGoal} onOpenChange={setShowAddGoal} />
+      {/* EDIT DIALOG */}
+      <Dialog open={!!editingGoal} onOpenChange={() => setEditingGoal(null)}>
+        <DialogContent className="sm:max-w-[450px]">
+          <DialogHeader>
+            <DialogTitle>Edit Goal Progress</DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={updateGoalProgress} className="space-y-5 mt-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                New Progress Value
+              </label>
+              <div className="flex items-center gap-2">
+                <Input
+                  value={progressValue}
+                  onChange={(e) => setProgressValue(e.target.value)}
+                  type="number"
+                  className="bg-gray-50 flex-1"
+                  placeholder="Enter new progress"
+                />
+                <span className="text-sm text-gray-600 whitespace-nowrap">
+                  of {editingGoal?.total} {
+                    editingGoal?.type.includes('book') ? 'books' :
+                    editingGoal?.type.includes('page') ? 'pages' :
+                    'hours'
+                  }
+                </span>
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setEditingGoal(null)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="flex-1 bg-linear-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
+              >
+                Save
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* DELETE CONFIRMATION DIALOG */}
+      <Dialog open={!!deletingGoal} onOpenChange={() => setDeletingGoal(null)}>
+        <DialogContent className="sm:max-w-[450px]">
+          <DialogHeader>
+            <DialogTitle>Delete Goal?</DialogTitle>
+          </DialogHeader>
+
+          <div className="py-4">
+            <p className="text-gray-600 mb-2">
+              Are you sure you want to delete this goal?
+            </p>
+            <p className="text-sm text-gray-500">
+              <span className="font-medium">{deletingGoal?.description}</span>
+            </p>
+            <p className="text-xs text-gray-400 mt-2">
+              This action cannot be undone.
+            </p>
+          </div>
+
+          <div className="flex gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setDeletingGoal(null)}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={deleteGoal}
+              className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+            >
+              Delete
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
+

@@ -25,7 +25,7 @@ interface AddGoalDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-type GoalType = 'books read' | 'pages read' | 'hours read';
+export type GoalType = 'books read' | 'pages read' | 'hours read';
 type GoalDuration = 'this week' | 'this month' | 'this year';
 
 export function AddGoalDialog({ open, onOpenChange }: AddGoalDialogProps) {
