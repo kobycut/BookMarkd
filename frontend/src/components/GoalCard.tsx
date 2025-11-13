@@ -115,7 +115,7 @@ export function GoalCard({ goal, onEditClick, onDeleteClick }: GoalCardProps) {
                   : 'text-gray-900'
             }`}
           >
-            {goal.type.includes('time')
+            {goal.type.includes('hour')
               ? `${goal.progress}h / ${goal.total}h`
               : `${goal.progress} / ${goal.total}`}
           </span>
