@@ -5,6 +5,7 @@ const API_URL = import.meta.env.VITE_API_URL || '';
 interface ApiError {
   error?: string;
   message?: string;
+  msg?: string;
 }
 
 interface LoginResponse {
@@ -38,7 +39,7 @@ const getToken = () => localStorage.getItem('token');
 
 const handleError = (response: Response, data: unknown): string => {
   const apiData = data as ApiError | null;
-  const errorMsg = apiData?.error || apiData?.message || response.statusText || 'Unknown error';
+  const errorMsg = apiData?.error || apiData?.message || apiData?.msg || response.statusText || 'Unknown error';
   toast.error(String(errorMsg));
   return errorMsg;
 };

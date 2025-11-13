@@ -107,10 +107,8 @@ export function ReadingGoals() {
 
       <AddGoalDialog
         open={showAddGoal}
-        onOpenChange={(open) => {
-          setShowAddGoal(open);
-          if (!open) loadGoals();
-        }}
+        onOpenChange={setShowAddGoal}
+        onGoalCreated={loadGoals}
       />
 
       {/* EDIT DIALOG */}

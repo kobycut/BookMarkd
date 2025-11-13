@@ -22,12 +22,13 @@ import { api } from '../api/client';
 interface AddGoalDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onGoalCreated: () => void;
 }
 
 export type GoalType = 'books read' | 'pages read' | 'hours read';
 type GoalDuration = 'this week' | 'this month' | 'this year';
 
-export function AddGoalDialog({ open, onOpenChange }: AddGoalDialogProps) {
+export function AddGoalDialog({ open, onOpenChange, onGoalCreated }: AddGoalDialogProps) {
   const [type, setType] = useState<GoalType>('books read');
   const [amount, setAmount] = useState<number | ''>('');
   const [duration, setDuration] = useState<GoalDuration>('this month');
@@ -116,6 +117,7 @@ export function AddGoalDialog({ open, onOpenChange }: AddGoalDialogProps) {
             </Button>
             <Button
               type="submit"
+              onClick={() => onGoalCreated()}
               disabled={loading || !amount}
               className="flex-1 bg-linear-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
             >
