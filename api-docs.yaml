@@ -53,3 +53,29 @@ endpoints:
     description: "Delete a specific goal by ID"
     path: "/api/goals/{goal_id}"
     method: "DELETE"
+  
+  # Books Endpoints
+  - name: "Create Book"
+    description: "Add a new book to the authenticated user's library with title, author, and total pages (required). Optional: page_progress (defaults to 0) and open_library_id (used for cover image retrieval)"
+    path: "/api/books"
+    method: "POST"
+  
+  - name: "Get All Books"
+    description: "Retrieve all books in the authenticated user's library with status (wishlist/reading/read), progress, and ratings"
+    path: "/api/books"
+    method: "GET"
+  
+  - name: "Delete Book"
+    description: "Remove a book from the authenticated user's library by book ID"
+    path: "/api/books/{book_id}"
+    method: "DELETE"
+  
+  - name: "Update Book Progress"
+    description: "Update the reading progress (page number) for a book and get updated details with recalculated status"
+    path: "/api/books/{book_id}/progress"
+    method: "PUT"
+  
+  - name: "Update Book Rating"
+    description: "Add or update a rating (0-5) for a completed book. Only works for books with 'read' status"
+    path: "/api/books/{book_id}/rating"
+    method: "PUT"

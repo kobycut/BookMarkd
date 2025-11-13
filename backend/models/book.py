@@ -7,6 +7,7 @@ class Book(db.Model):
     title = db.Column(db.String(200), nullable=False)
     author = db.Column(db.String(120), nullable=False)
     page_count = db.Column(db.Integer)
+    open_library_id = db.Column(db.String(100), unique=True)
     genre = db.Column(db.String(50))
 
     user_books = db.relationship("UserBook", back_populates="book", cascade="all, delete-orphan")
