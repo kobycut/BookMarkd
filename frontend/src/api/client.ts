@@ -106,7 +106,7 @@ export const api = {
     if (!token) return null;
 
     try {
-      return await makeRequest<VerifyTokenResponse>('/api/auth/verify', {
+      return await makeRequest<VerifyTokenResponse>('/api/auth/me', {
         method: 'GET',
         requiresAuth: true,
       });
