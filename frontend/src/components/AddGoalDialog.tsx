@@ -42,6 +42,7 @@ export function AddGoalDialog({ open, onOpenChange, onGoalCreated }: AddGoalDial
     try {
       await api.createGoal(type, Number(amount), duration);
       toast.success('Goal created successfully');
+      onGoalCreated();
       onOpenChange(false);
       setAmount('');
       setType('books read');
@@ -109,15 +110,14 @@ export function AddGoalDialog({ open, onOpenChange, onGoalCreated }: AddGoalDial
             <Button
               type="button"
               variant="outline"
-              onClick={() => onOpenChange(false)}
               className="flex-1"
+              onClick={() => onOpenChange(false)}
               disabled={loading}
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              onClick={() => onGoalCreated()}
               disabled={loading || !amount}
               className="flex-1 bg-linear-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
             >
