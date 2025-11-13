@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -15,16 +16,41 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select';
+import toast from 'react-hot-toast';
+import { api } from '../api/client';
 
 interface AddGoalDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onGoalCreated: () => void;
 }
 
-export function AddGoalDialog({ open, onOpenChange }: AddGoalDialogProps) {
-  const handleSubmit = (e: React.FormEvent) => {
+export type GoalType = 'books read' | 'pages read' | 'hours read';
+type GoalDuration = 'this week' | 'this month' | 'this year';
+
+export function AddGoalDialog({ open, onOpenChange, onGoalCreated }: AddGoalDialogProps) {
+  const [type, setType] = useState<GoalType>('books read');
+  const [amount, setAmount] = useState<number | ''>('');
+  const [duration, setDuration] = useState<GoalDuration>('this month');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onOpenChange(false);
+    if (!amount || !type || !duration) return;
+
+    setLoading(true);
+    try {
+      await api.createGoal(type, Number(amount), duration);
+      toast.success('Goal created successfully');
+      onOpenChange(false);
+      setAmount('');
+      setType('books read');
+      setDuration('this month');
+    } catch (err: any) {
+      // Error already toasted by api client
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -39,40 +65,42 @@ export function AddGoalDialog({ open, onOpenChange }: AddGoalDialogProps) {
 
         <form onSubmit={handleSubmit} className="space-y-5 mt-4">
           <div className="space-y-2">
-            <Label htmlFor="goal-type">Goal Type</Label>
-            <Select defaultValue="books">
-              <SelectTrigger id="goal-type" className="bg-gray-50">
+            <Label>Goal Type</Label>
+            <Select value={type} onValueChange={(value) => setType(value as GoalType)}>
+              <SelectTrigger className="bg-gray-50">
                 <SelectValue placeholder="Select goal type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="books">Number of Books</SelectItem>
-                <SelectItem value="pages">Number of Pages</SelectItem>
-                <SelectItem value="time">Reading Time (hours)</SelectItem>
+                <SelectItem value="books read">Number of Books</SelectItem>
+                <SelectItem value="pages read">Number of Pages</SelectItem>
+                <SelectItem value="hours read">Reading Time (hours)</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="target">Target</Label>
+            <Label>Target Amount</Label>
             <Input
-              id="target"
               type="number"
-              placeholder="Enter your target"
+              value={amount}
+              onChange={(e) =>
+                setAmount(e.target.value ? Number(e.target.value) : '')
+              }
               className="bg-gray-50"
+              placeholder="Enter target value"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="period">Time Period</Label>
-            <Select defaultValue="month">
-              <SelectTrigger id="period" className="bg-gray-50">
-                <SelectValue placeholder="Select period" />
+            <Label>Duration</Label>
+            <Select value={duration} onValueChange={(value) => setDuration(value as GoalDuration)}>
+              <SelectTrigger className="bg-gray-50">
+                <SelectValue placeholder="Select duration" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="week">This Week</SelectItem>
-                <SelectItem value="month">This Month</SelectItem>
-                <SelectItem value="year">This Year</SelectItem>
-                <SelectItem value="custom">Custom</SelectItem>
+                <SelectItem value="this week">This Week</SelectItem>
+                <SelectItem value="this month">This Month</SelectItem>
+                <SelectItem value="this year">This Year</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -83,14 +111,17 @@ export function AddGoalDialog({ open, onOpenChange }: AddGoalDialogProps) {
               variant="outline"
               onClick={() => onOpenChange(false)}
               className="flex-1"
+              disabled={loading}
             >
               Cancel
             </Button>
             <Button
               type="submit"
+              onClick={() => onGoalCreated()}
+              disabled={loading || !amount}
               className="flex-1 bg-linear-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
             >
-              Create Goal
+              {loading ? 'Creating...' : 'Create Goal'}
             </Button>
           </div>
         </form>
