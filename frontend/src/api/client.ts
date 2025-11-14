@@ -165,4 +165,12 @@ export const api = {
     });
     return { success: true };
   },
+
+  async getRecommendations(survey: any): Promise<{ recommendations: any[]; survey: any }> {
+    return makeRequest<{ recommendations: any[]; survey: any }>('/api/recommendations', {
+      method: 'POST',
+      body: survey,
+      requiresAuth: true,
+    });
+  },
 };

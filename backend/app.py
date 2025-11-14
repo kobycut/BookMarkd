@@ -1,9 +1,13 @@
 import os
 from flask import Flask, jsonify
 from flask_cors import CORS
+from dotenv import load_dotenv
 from config import config
 from extensions import db, jwt
 from database import init_db
+
+# Load environment variables from .env file
+load_dotenv()
 
 def create_app(config_name=None):
     """Application factory that configures extensions and routes."""
