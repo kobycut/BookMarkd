@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useRef } from 'react';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { BookMarked, Plus, Search, Bell, Settings, LogOut } from 'lucide-react';
@@ -16,8 +17,15 @@ import {
 import { useUser } from '@/context/UserContext';
 
 export function Dashboard() {
+  const bookListRef = useRef<{ loadBooks: () => Promise<void> }>(null);
   const [showAddBook, setShowAddBook] = useState(false);
   const { user, logout } = useUser();
+
+  const handleBookAdded = () => {
+    if (bookListRef.current) {
+      bookListRef.current.loadBooks();
+    }
+  };
 
   const getInitials = (username: string = '') => {
     return username
@@ -107,7 +115,7 @@ export function Dashboard() {
                 Add Book
               </Button>
             </div>
-            <BookList />
+              <BookList ref={bookListRef} />
           </div>
 
           {/* Right Column - Reading Goals */}
@@ -126,7 +134,7 @@ export function Dashboard() {
       </button>
 
       {/* Add Book Dialog */}
-      <AddBookDialog open={showAddBook} onOpenChange={setShowAddBook} />
+      <AddBookDialog open={showAddBook} onOpenChange={setShowAddBook} onBookAdded={handleBookAdded} />
     </div>
   );
 }

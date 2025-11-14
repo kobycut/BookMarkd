@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState, useImperativeHandle, forwardRef } from 'react';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
@@ -9,73 +9,47 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
+import { api } from '../api/client';
 
 interface Book {
   id: number;
   title: string;
   author: string;
-  cover: string;
+  open_library_id?: string;
   status: 'read' | 'reading' | 'wishlist';
   rating?: number;
-  progress?: number;
+  page_progress: number;
+  total_pages: number;
 }
 
-const mockBooks: Book[] = [
-  {
-    id: 1,
-    title: 'The Midnight Library',
-    author: 'Matt Haig',
-    cover: 'https://images.unsplash.com/photo-1661936901394-a993c79303c7?w=300&h=450&fit=crop',
-    status: 'read',
-    rating: 5,
-  },
-  {
-    id: 2,
-    title: 'Atomic Habits',
-    author: 'James Clear',
-    cover: 'https://images.unsplash.com/photo-1419640303358-44f0d27f48e7?w=300&h=450&fit=crop',
-    status: 'reading',
-    progress: 65,
-  },
-  {
-    id: 3,
-    title: 'Project Hail Mary',
-    author: 'Andy Weir',
-    cover: 'https://images.unsplash.com/photo-1660606422342-2ce59709bb14?w=300&h=450&fit=crop',
-    status: 'reading',
-    progress: 32,
-  },
-  {
-    id: 4,
-    title: 'The Silent Patient',
-    author: 'Alex Michaelides',
-    cover: 'https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?w=300&h=450&fit=crop',
-    status: 'wishlist',
-  },
-  {
-    id: 5,
-    title: 'Dune',
-    author: 'Frank Herbert',
-    cover: 'https://images.unsplash.com/photo-1661936901394-a993c79303c7?w=300&h=450&fit=crop',
-    status: 'read',
-    rating: 4,
-  },
-  {
-    id: 6,
-    title: 'Thinking, Fast and Slow',
-    author: 'Daniel Kahneman',
-    cover: 'https://images.unsplash.com/photo-1419640303358-44f0d27f48e7?w=300&h=450&fit=crop',
-    status: 'wishlist',
-  },
-];
-
-export function BookList() {
+export const BookList = forwardRef(function BookList(_props, ref) {
+  const [books, setBooks] = useState<Book[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<string>('all');
+
+  const loadBooks = async () => {
+    try {
+      const data = await api.getBooks();
+      setBooks(data);
+    } catch (err) {
+      // Error already toasted by api client
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useImperativeHandle(ref, () => ({
+    loadBooks,
+  }));
+
+  useEffect(() => {
+    loadBooks();
+  }, []);
 
   const filteredBooks =
     activeTab === 'all'
-      ? mockBooks
-      : mockBooks.filter((book) => book.status === activeTab);
+      ? books
+      : books.filter((book) => book.status === activeTab);
 
   const statusBadge = (status: Book['status']) => {
     const variants = {
@@ -108,18 +82,30 @@ export function BookList() {
         </TabsList>
       </Tabs>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {filteredBooks.map((book) => (
+      {loading ? (
+        <div className="text-center py-12">
+          <p className="text-gray-500">Loading your books...</p>
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {filteredBooks.map((book) => (
           <Card key={book.id} className="overflow-hidden hover:shadow-lg transition-shadow">
             <div className="flex gap-4 p-4">
               {/* Book Cover */}
               <div className="shrink-0">
-                <div className="w-24 h-36 rounded-lg overflow-hidden bg-gray-200">
-                  <img
-                    src={book.cover}
-                    alt={book.title}
-                    className="w-full h-full object-cover"
-                  />
+                <div className="w-24 h-36 rounded-lg overflow-hidden bg-linear-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+                  {book.open_library_id ? (
+                    <img
+                      src={`https://covers.openlibrary.org/b/olid/${book.open_library_id}-M.jpg`}
+                      alt={book.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="text-white text-xl font-bold text-center px-2 line-clamp-3">
+                      {book.title}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -164,16 +150,22 @@ export function BookList() {
                   )}
 
                   {/* Progress Bar */}
-                  {book.progress !== undefined && (
+                  {book.page_progress !== undefined && book.status === 'reading' && (
                     <div>
                       <div className="flex items-center justify-between text-sm mb-1">
                         <span className="text-gray-600">Progress</span>
-                        <span className="text-gray-900">{book.progress}%</span>
+                        <span className="text-gray-900">
+                          {Math.round((book.page_progress / book.total_pages) * 100)}%
+                        </span>
                       </div>
                       <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-linear-to-r from-blue-600 to-green-600 rounded-full transition-all"
-                          style={{ width: `${book.progress}%` }}
+                          style={{
+                            width: `${Math.round(
+                              (book.page_progress / book.total_pages) * 100
+                            )}%`,
+                          }}
                         />
                       </div>
                     </div>
@@ -190,6 +182,8 @@ export function BookList() {
           <p className="text-gray-500">No books found in this category</p>
         </div>
       )}
+        </>
+      )}
     </div>
-  );
-}
+    );
+  });

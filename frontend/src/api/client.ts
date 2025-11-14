@@ -35,6 +35,17 @@ interface VerifyTokenResponse {
   };
 }
 
+interface BooksResponse extends Array<{
+  id: number;
+  title: string;
+  author: string;
+  status: 'read' | 'reading' | 'wishlist';
+  open_library_id?: string;
+  page_progress: number;
+  total_pages: number;
+  rating?: number;
+}> {}
+
 const getToken = () => localStorage.getItem('token');
 
 const handleError = (response: Response, data: unknown): string => {
@@ -164,5 +175,22 @@ export const api = {
       requiresAuth: true,
     });
     return { success: true };
+  },
+
+  // Books endpoints
+  async createBook(title: string, author: string, page_progress: number, total_pages: number, open_library_id: string): Promise<{ success: boolean }> {
+    await makeRequest<void>('/api/books', {
+      method: 'POST',
+      body: { title, author, page_progress, total_pages, open_library_id },
+      requiresAuth: true,
+    });
+    return { success: true };
+  },
+
+  async getBooks(): Promise<BooksResponse> {
+    return makeRequest<BooksResponse>('/api/books', {
+      method: 'GET',
+      requiresAuth: true,
+    });
   },
 };
