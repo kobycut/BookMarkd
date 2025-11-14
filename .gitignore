@@ -35,6 +35,7 @@ instance/
 # Environment variables
 .env
 .env.local
+.env.backup
 
 # Node
 node_modules/
