@@ -193,4 +193,12 @@ export const api = {
       requiresAuth: true,
     });
   },
+  
+  async deleteBook(bookId: number): Promise<{ success: boolean }> {
+    await makeRequest<void>(`/api/books/${bookId}`, {
+      method: 'DELETE',
+      requiresAuth: true,
+    });
+    return { success: true };
+  },
 };

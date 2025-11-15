@@ -18,7 +18,7 @@ interface OpenLibraryBook {
   title: string;
   edition_key?: string;
   author_name?: string[];
-  cover_i?: number;
+  cover_i: number;
   cover_edition_key?: string;
 }
 
@@ -170,7 +170,7 @@ export function AddBookDialog({ open, onOpenChange, onBookAdded }: AddBookDialog
             <div ref={scrollRef} className="border rounded p-2 h-65 overflow-y-auto">
               {currentPage.map((edition) => {
                 // resolve edition ID: prefer cover_edition_key or edition_key (to get page number info)
-                edition.key = edition.cover_edition_key ?? edition.edition_key?.[0] ?? edition.key;
+                edition.key = edition.cover_edition_key ?? edition.edition_key?.[0] ?? edition.cover_i?.toString();
                 return (
                   <div
                     key={edition.key}

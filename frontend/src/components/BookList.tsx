@@ -10,6 +10,9 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { api } from '../api/client';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
+import { toast } from 'react-hot-toast';
+import { Button } from './ui/button';
 
 interface Book {
   id: number;
@@ -26,6 +29,7 @@ export const BookList = forwardRef(function BookList(_props, ref) {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<string>('all');
+  const [deletingBook, setDeletingBook] = useState<Book | null>(null);
 
   const loadBooks = async () => {
     try {
@@ -36,6 +40,15 @@ export const BookList = forwardRef(function BookList(_props, ref) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDeleteBook = async () => {
+    if (!deletingBook) return;
+    
+    await api.deleteBook(deletingBook.id);
+    toast.success('Book deleted');
+    setDeletingBook(null);
+    loadBooks();
   };
 
   useImperativeHandle(ref, () => ({
@@ -94,10 +107,15 @@ export const BookList = forwardRef(function BookList(_props, ref) {
             <div className="flex gap-4 p-4">
               {/* Book Cover */}
               <div className="shrink-0">
-                <div className="w-24 h-36 rounded-lg overflow-hidden bg-linear-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+                <div className="w-24 h-36 overflow-hidden bg-linear-to-br from-blue-400 to-purple-500 flex items-center justify-center">
                   {book.open_library_id ? (
                     <img
-                      src={`https://covers.openlibrary.org/b/olid/${book.open_library_id}-M.jpg`}
+                      src={
+                        // this is handling different types of open library cover IDs
+                        book.open_library_id.startsWith("OL")
+                          ? `https://covers.openlibrary.org/b/olid/${book.open_library_id}-M.jpg`
+                          : `https://covers.openlibrary.org/b/id/${book.open_library_id}-M.jpg`
+                      }
                       alt={book.title}
                       className="w-full h-full object-cover"
                     />
@@ -125,7 +143,12 @@ export const BookList = forwardRef(function BookList(_props, ref) {
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem className="hover:cursor-pointer">Edit</DropdownMenuItem>
                       <DropdownMenuItem className="hover:cursor-pointer">Change Status</DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-600 hover:cursor-pointer">Remove</DropdownMenuItem>
+                      <DropdownMenuItem 
+                        className="text-red-600 hover:cursor-pointer"
+                        onClick={() => setDeletingBook(book)}
+                      >
+                        Remove
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -176,6 +199,43 @@ export const BookList = forwardRef(function BookList(_props, ref) {
           </Card>
         ))}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={!!deletingBook} onOpenChange={() => setDeletingBook(null)}>
+        <DialogContent className="sm:max-w-[450px]">
+          <DialogHeader>
+            <DialogTitle>Delete Book?</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-gray-600 mb-2">
+              Are you sure you want to delete this book?
+            </p>
+            <p className="text-sm text-gray-500">
+              <span className="font-medium">{deletingBook?.title}</span>
+            </p>
+            <p className="text-xs text-gray-400 mt-2">
+              This action cannot be undone.
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setDeletingBook(null)}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={handleDeleteBook}
+              className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+            >
+              Delete
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {filteredBooks.length === 0 && (
         <div className="text-center py-12">
