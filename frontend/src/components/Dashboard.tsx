@@ -6,6 +6,7 @@ import { BookMarked, Plus, Search, Bell, Settings, LogOut } from 'lucide-react';
 import { BookList } from './BookList';
 import { ReadingGoals } from './ReadingGoals';
 import { AddBookDialog } from './AddBookDialog';
+import { Recommendation } from './Recommendation';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +20,7 @@ import { useUser } from '@/context/UserContext';
 export function Dashboard() {
   const bookListRef = useRef<{ loadBooks: () => Promise<void> }>(null);
   const [showAddBook, setShowAddBook] = useState(false);
+  const [currentView, setCurrentView] = useState<'dashboard' | 'recommendations'>('dashboard');
   const { user, logout } = useUser();
 
   const handleBookAdded = () => {
@@ -64,6 +66,15 @@ export function Dashboard() {
 
             {/* Right Menu */}
             <div className="flex items-center gap-4">
+              <Button
+                onClick={() => setCurrentView(currentView === 'dashboard' ? 'recommendations' : 'dashboard')}
+                variant="outline"
+                size="sm"
+                className="text-purple-600 border-purple-200 hover:bg-purple-50"
+              >
+                {currentView === 'dashboard' ? 'Find Your Next Favorite Book!' : 'Back to Books'}
+              </Button>
+
               <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors hover:cursor-pointer">
                 <Bell className="w-5 h-5" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-blue-600 rounded-full"></span>
@@ -102,27 +113,35 @@ export function Dashboard() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - My Books */}
-          <div className="lg:col-span-2">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-gray-900">My Books</h2>
-              <Button
-                onClick={() => setShowAddBook(true)}
-                className="bg-linear-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Book
-              </Button>
+        {currentView === 'dashboard' ? (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column - My Books */}
+            <div className="lg:col-span-2">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-gray-900">My Books</h2>
+                <Button
+                  onClick={() => setShowAddBook(true)}
+                  className="bg-linear-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Book
+                </Button>
+              </div>
+              <BookList />
             </div>
               <BookList ref={bookListRef} />
           </div>
 
-          {/* Right Column - Reading Goals */}
-          <div className="lg:col-span-1">
-            <ReadingGoals />
+            {/* Right Column - Reading Goals */}
+            <div className="lg:col-span-1">
+              <ReadingGoals />
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="max-w-4xl mx-auto">
+            <Recommendation />
+          </div>
+        )}
       </main>
 
       {/* Floating Add Button (Mobile) */}

@@ -176,6 +176,14 @@ export const api = {
     });
     return { success: true };
   },
+  
+  async getRecommendations(survey: any): Promise<{ recommendations: any[]; survey: any }> {
+    return makeRequest<{ recommendations: any[]; survey: any }>('/api/recommendations', {
+      method: 'POST',
+      body: survey,
+      requiresAuth: true,
+    });
+  },
 
   // Books endpoints
   async createBook(title: string, author: string, page_progress: number, total_pages: number, open_library_id: string): Promise<{ success: boolean }> {
@@ -193,8 +201,6 @@ export const api = {
       requiresAuth: true,
     });
   },
-
-
 
   async updateBookRating(bookId: number, rating: number): Promise<{ success: boolean }> {
     await makeRequest<void>(`/api/books/${bookId}/rating`, {
@@ -220,5 +226,4 @@ export const api = {
       requiresAuth: true,
     });
     return { success: true };
-  },
 };
