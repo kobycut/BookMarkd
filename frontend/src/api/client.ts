@@ -226,4 +226,5 @@ export const api = {
       requiresAuth: true,
     });
     return { success: true };
+  },
 };

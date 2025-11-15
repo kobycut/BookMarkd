@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { useRef } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { BookMarked, Plus, Search, Bell, Settings, LogOut } from 'lucide-react';
@@ -127,10 +126,8 @@ export function Dashboard() {
                   Add Book
                 </Button>
               </div>
-              <BookList />
-            </div>
               <BookList ref={bookListRef} />
-          </div>
+            </div>
 
             {/* Right Column - Reading Goals */}
             <div className="lg:col-span-1">
