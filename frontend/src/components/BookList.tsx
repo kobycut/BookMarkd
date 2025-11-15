@@ -2,7 +2,9 @@ import { useEffect, useState, useImperativeHandle, forwardRef } from 'react';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
-import { MoreVertical, Star } from 'lucide-react';
+import { MoreVertical } from 'lucide-react';
+// @ts-ignore (necessary because there is no @types/react-stars package)
+import ReactStars from 'react-stars';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,6 +54,17 @@ export const BookList = forwardRef(function BookList(_props, ref) {
     toast.success('Book deleted');
     setDeletingBook(null);
     loadBooks();
+  };
+
+  const handleUpdateRating = async (book: Book, newRating: number) => {
+    if (book.status !== 'read') return;
+    try {
+      await api.updateBookRating(book.id, newRating as number);
+      toast.success('Rating updated');
+      loadBooks();
+    } catch (err) {
+      // Error already toasted by api client
+    }
   };
 
   const handleUpdateProgress = async () => {
@@ -180,19 +193,18 @@ export const BookList = forwardRef(function BookList(_props, ref) {
                     <div className="space-y-2">
                       {statusBadge(book.status)}
 
-                      {/* Rating */}
-                      {book.rating && (
+                      {/* Rating: Only show for read books */}
+                      {book.status === 'read' && (
                         <div className="flex items-center gap-1">
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`w-4 h-4 ${
-                                i < book.rating!
-                                  ? 'fill-yellow-400 text-yellow-400'
-                                  : 'text-gray-300'
-                              }`}
-                            />
-                          ))}
+                          <ReactStars
+                            count={5}
+                            onChange={(newRating: number) => handleUpdateRating(book, newRating)}
+                            size={24}
+                            color="#d1d5db"
+                            activeColor="#facc15"
+                            value={book.rating ?? 0}
+                            half={true}
+                          />
                         </div>
                       )}
 

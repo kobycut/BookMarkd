@@ -195,6 +195,16 @@ export const api = {
   },
 
 
+
+  async updateBookRating(bookId: number, rating: number): Promise<{ success: boolean }> {
+    await makeRequest<void>(`/api/books/${bookId}/rating`, {
+      method: 'PUT',
+      body: { rating },
+      requiresAuth: true,
+    });
+    return { success: true };
+  },
+
   async updateBookProgress(bookId: number, page_progress: number): Promise<{ success: boolean }> {
     await makeRequest<void>(`/api/books/${bookId}/progress`, {
       method: 'PUT',
