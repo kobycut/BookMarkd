@@ -10,6 +10,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { toast } from 'react-hot-toast';
+import { api } from '@/api/client';
 
 // some of these fields are strangely named, but they match the JSON response from Open Library
 interface OpenLibraryBook {
@@ -17,16 +18,17 @@ interface OpenLibraryBook {
   title: string;
   edition_key?: string;
   author_name?: string[];
-  cover_i?: number;
+  cover_i: number;
   cover_edition_key?: string;
 }
 
 interface AddBookDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onBookAdded: () => void;
 }
 
-export function AddBookDialog({ open, onOpenChange }: AddBookDialogProps) {
+export function AddBookDialog({ open, onOpenChange, onBookAdded }: AddBookDialogProps) {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [editions, setEditions] = useState<OpenLibraryBook[]>([]);
@@ -46,9 +48,15 @@ export function AddBookDialog({ open, onOpenChange }: AddBookDialogProps) {
 
     const authors = selectedEdition.author_name?.join(', ') ?? 'Unknown author';
 
-    toast.success(
-      `Book added to My Books! "${selectedEdition.title}" by ${authors}. I've read ${pagesRead} out of ${pageCount} pages.`
+    await api.createBook(
+      selectedEdition.title,
+      authors,
+      pagesRead,
+      pageCount ?? 0,
+      selectedEdition.key
     );
+    toast.success('Book added');
+    onBookAdded();
 
     onOpenChange(false);
   };
@@ -162,7 +170,7 @@ export function AddBookDialog({ open, onOpenChange }: AddBookDialogProps) {
             <div ref={scrollRef} className="border rounded p-2 h-65 overflow-y-auto">
               {currentPage.map((edition) => {
                 // resolve edition ID: prefer cover_edition_key or edition_key (to get page number info)
-                edition.key = edition.cover_edition_key ?? edition.edition_key?.[0] ?? edition.key;
+                edition.key = edition.cover_edition_key ?? edition.edition_key?.[0] ?? edition.cover_i?.toString();
                 return (
                   <div
                     key={edition.key}

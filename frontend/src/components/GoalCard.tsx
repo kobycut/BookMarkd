@@ -122,7 +122,7 @@ export function GoalCard({ goal, onEditClick, onDeleteClick }: GoalCardProps) {
         </div>
         <Progress 
           value={percentage} 
-          className={`h-2 ${isComplete ? '[&>div]:bg-green-700' : ''}`}
+          className={`h-2 ${isComplete ? '[&>div]:bg-green-700' : '[&>div]:bg-linear-to-r [&>div]:from-blue-600 [&>div]:to-green-600'}`}
         />
         <p
           className={`text-xs text-right ${
