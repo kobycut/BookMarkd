@@ -193,7 +193,17 @@ export const api = {
       requiresAuth: true,
     });
   },
-  
+
+
+  async updateBookProgress(bookId: number, page_progress: number): Promise<{ success: boolean }> {
+    await makeRequest<void>(`/api/books/${bookId}/progress`, {
+      method: 'PUT',
+      body: { page_progress },
+      requiresAuth: true,
+    });
+    return { success: true };
+  },
+
   async deleteBook(bookId: number): Promise<{ success: boolean }> {
     await makeRequest<void>(`/api/books/${bookId}`, {
       method: 'DELETE',
