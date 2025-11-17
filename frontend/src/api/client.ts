@@ -35,6 +35,17 @@ interface VerifyTokenResponse {
   };
 }
 
+interface BooksResponse extends Array<{
+  id: number;
+  title: string;
+  author: string;
+  status: 'read' | 'reading' | 'wishlist';
+  open_library_id?: string;
+  page_progress: number;
+  total_pages: number;
+  rating?: number;
+}> {}
+
 const getToken = () => localStorage.getItem('token');
 
 const handleError = (response: Response, data: unknown): string => {
@@ -165,12 +176,55 @@ export const api = {
     });
     return { success: true };
   },
-
+  
   async getRecommendations(survey: any): Promise<{ recommendations: any[]; survey: any }> {
     return makeRequest<{ recommendations: any[]; survey: any }>('/api/recommendations', {
       method: 'POST',
       body: survey,
       requiresAuth: true,
     });
+  },
+
+  // Books endpoints
+  async createBook(title: string, author: string, page_progress: number, total_pages: number, open_library_id: string): Promise<{ success: boolean }> {
+    await makeRequest<void>('/api/books', {
+      method: 'POST',
+      body: { title, author, page_progress, total_pages, open_library_id },
+      requiresAuth: true,
+    });
+    return { success: true };
+  },
+
+  async getBooks(): Promise<BooksResponse> {
+    return makeRequest<BooksResponse>('/api/books', {
+      method: 'GET',
+      requiresAuth: true,
+    });
+  },
+
+  async updateBookRating(bookId: number, rating: number): Promise<{ success: boolean }> {
+    await makeRequest<void>(`/api/books/${bookId}/rating`, {
+      method: 'PUT',
+      body: { rating },
+      requiresAuth: true,
+    });
+    return { success: true };
+  },
+
+  async updateBookProgress(bookId: number, page_progress: number): Promise<{ success: boolean }> {
+    await makeRequest<void>(`/api/books/${bookId}/progress`, {
+      method: 'PUT',
+      body: { page_progress },
+      requiresAuth: true,
+    });
+    return { success: true };
+  },
+
+  async deleteBook(bookId: number): Promise<{ success: boolean }> {
+    await makeRequest<void>(`/api/books/${bookId}`, {
+      method: 'DELETE',
+      requiresAuth: true,
+    });
+    return { success: true };
   },
 };
