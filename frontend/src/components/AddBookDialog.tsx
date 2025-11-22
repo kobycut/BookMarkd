@@ -31,6 +31,7 @@ interface AddBookDialogProps {
 export function AddBookDialog({ open, onOpenChange, onBookAdded }: AddBookDialogProps) {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
+  const [isbn, setIsbn] = useState('');
   const [editions, setEditions] = useState<OpenLibraryBook[]>([]);
   const [pageIndex, setPageIndex] = useState(0);
   const [selectedEdition, setSelectedEdition] = useState<OpenLibraryBook | null>(null);
@@ -72,16 +73,52 @@ export function AddBookDialog({ open, onOpenChange, onBookAdded }: AddBookDialog
 
 
   const handleSearch = async () => {
-    if (!title && !author) return;
-    const params = new URLSearchParams();
-    if (title) params.append('title', title);
-    if (author) params.append('author', author);
-    params.append('limit', '50');
+    const isbnValidLength = isbn.trim().length == 13 || isbn.trim().length == 10;
+    if (!title && !author && !isbnValidLength) return;
 
-    const res = await fetch(`https://openlibrary.org/search.json?${params.toString()}`);
-    const data = await res.json();
-    setEditions(data.docs);
-    setPageIndex(0);
+    // prefer searching by ISBN if provided and valid length
+    if (isbnValidLength) {
+      // Use the Open Library Books API to get richer data for ISBNs
+      // jscmd=data returns author names, covers and page counts when available
+      try {
+        const res = await fetch(
+          `https://openlibrary.org/api/books?bibkeys=ISBN:${isbn.trim()}&format=json&jscmd=data`
+        );
+        const json = await res.json();
+        const bookKey = `ISBN:${isbn.trim()}`;
+        const bookData = json[bookKey];
+        if (bookData) {
+          // normalize into our OpenLibraryBook shape
+          const olId = (bookData.identifiers && bookData.identifiers.openlibrary && bookData.identifiers.openlibrary[0]) || '';
+          const edition = {
+            key: olId || (bookData.key ?? bookKey),
+            title: bookData.title,
+            edition_key: bookData.identifiers?.edition_key ?? undefined,
+            author_name: bookData.authors ? bookData.authors.map((a: any) => a.name).filter(Boolean) : undefined,
+            cover_i: bookData.cover && bookData.cover.id ? bookData.cover.id : (bookData.cover_edition_key ?? 0),
+            cover_edition_key: olId || undefined,
+          } as OpenLibraryBook;
+
+          setEditions([edition]);
+          // If the books API provided a page count, prefill selectedPageCount for convenience
+          if (bookData.number_of_pages) setSelectedPageCount(bookData.number_of_pages);
+          setPageIndex(0);
+          return;
+        }
+      } catch (err) {
+        toast.error('Failed to get book data by ISBN. Please try again with verified ISBN or other details.');
+      }
+    } else {
+      const params = new URLSearchParams();
+      if (title) params.append('title', title);
+      if (author) params.append('author', author);
+      params.append('limit', '50');
+      
+      const res = await fetch(`https://openlibrary.org/search.json?${params.toString()}`);
+      const data = await res.json();
+      setEditions(data.docs);
+      setPageIndex(0);
+    }
   };
 
   const changePage = (delta: number) => {
@@ -129,36 +166,49 @@ export function AddBookDialog({ open, onOpenChange, onBookAdded }: AddBookDialog
         <DialogHeader>
           <DialogTitle>Add New Book</DialogTitle>
           <DialogDescription>
-            Add a book to your reading collection.
+            Add a book to your reading collection. Search by title/author or ISBN.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleAddBook} className="space-y-5 mt-4">
-          <div className="space-y-2">
-            <Label htmlFor="book-title">Title</Label>
-            <Input
-              id="book-title"
-              placeholder="Enter book title"
-              className="bg-gray-50"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </div>
+          <div className="flex gap-3">
+            <div className="space-y-2 flex-1">
+              <Label htmlFor="book-title">Title</Label>
+              <Input
+                id="book-title"
+                placeholder="Enter book title"
+                className="bg-gray-50"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="author">Author</Label>
-            <div className="flex gap-2">
+            <div className="space-y-2 flex-1">
+              <Label htmlFor="author">Author</Label>
               <Input
                 id="author"
                 placeholder="Enter author name"
-                className="bg-gray-50 flex-1"
+                className="bg-gray-50"
                 value={author}
                 onChange={(e) => setAuthor(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="isbn">ISBN</Label>
+            <div className="flex gap-2">
+              <Input
+                id="isbn"
+                placeholder="Enter ISBN"
+                className="bg-gray-50 flex-1"
+                value={isbn}
+                onChange={(e) => setIsbn(e.target.value)}
               />
               <Button
                 type="button"
                 variant="outline"
-                disabled={!title.trim() && !author.trim()}
+                disabled={!title.trim() && !author.trim() && !(isbn.trim().length == 13) && !(isbn.trim().length == 10)}
                 onClick={handleSearch}
               >
                 Search Books
