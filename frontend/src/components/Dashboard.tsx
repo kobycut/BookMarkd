@@ -3,6 +3,7 @@ import { Button } from './ui/button';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { BookMarked, Plus, Search, Bell, Settings, LogOut } from 'lucide-react';
 import { BookList } from './BookList';
+import { BookClubs } from './BookClubs';
 import { ReadingGoals } from './ReadingGoals';
 import { AddBookDialog } from './AddBookDialog';
 import { Recommendation } from './Recommendation';
@@ -19,7 +20,7 @@ import { useUser } from '@/context/UserContext';
 export function Dashboard() {
   const bookListRef = useRef<{ loadBooks: () => Promise<void> }>(null);
   const [showAddBook, setShowAddBook] = useState(false);
-  const [currentView, setCurrentView] = useState<'dashboard' | 'recommendations'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'recommendations' | 'bookclubs'>('dashboard');
   const { user, logout } = useUser();
 
   const handleBookAdded = () => {
@@ -73,6 +74,19 @@ export function Dashboard() {
               >
                 {currentView === 'dashboard' ? 'Find Your Next Favorite Book!' : 'Back to Books'}
               </Button>
+
+              {currentView !== 'bookclubs' && (
+                <Button
+                  onClick={() =>
+                    setCurrentView(prev => (prev === 'bookclubs' ? 'dashboard' : 'bookclubs'))
+                  }
+                  variant="outline"
+                  size="sm"
+                  className="text-purple-600 border-purple-200 hover:bg-purple-50"
+                >
+                  Book Clubs
+                </Button>
+              )}
 
               <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors hover:cursor-pointer">
                 <Bell className="w-5 h-5" />
@@ -134,10 +148,12 @@ export function Dashboard() {
               <ReadingGoals />
             </div>
           </div>
-        ) : (
+        ) : currentView === 'recommendations' ? (
           <div className="max-w-4xl mx-auto">
             <Recommendation />
           </div>
+        ) : (
+          <BookClubs />
         )}
       </main>
 
