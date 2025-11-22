@@ -7,21 +7,11 @@ import re
 clubs_bp = Blueprint('clubs', __name__)
 
 @clubs_bp.route('/clubs', methods=['GET'])
-@jwt_required()
 def get_clubs():
     """
-    Return all clubs the authenticated user can join (i.e., clubs the user is not already a member of).
+    Return all clubs in the database (public endpoint).
     """
-    user_id = get_jwt_identity()
-    # Get club ids the user already joined
-    joined = UserClub.query.filter_by(user_id=user_id).all()
-    joined_ids = {u.club_id for u in joined}
-
-    if joined_ids:
-        clubs = Club.query.filter(Club.club_id.notin_(joined_ids)).all()
-    else:
-        clubs = Club.query.all()
-
+    clubs = Club.query.all()
     result = []
     for c in clubs:
         result.append({
@@ -30,7 +20,34 @@ def get_clubs():
             "slug": c.slug,
             "description": c.description,
         })
+    return jsonify(result), 200
 
+
+@clubs_bp.route('/clubs/mine', methods=['GET'])
+@jwt_required()
+def get_my_clubs():
+    """
+    Return all clubs the authenticated user is a member of.
+    """
+    user_id = get_jwt_identity()
+    try:
+        user_id = int(user_id)
+    except (TypeError, ValueError):
+        return jsonify({'error': 'Invalid token subject'}), 422
+
+    memberships = UserClub.query.filter_by(user_id=user_id).all()
+    club_ids = [m.club_id for m in memberships]
+    if not club_ids:
+        return jsonify([]), 200
+    clubs = Club.query.filter(Club.club_id.in_(club_ids)).all()
+    result = []
+    for c in clubs:
+        result.append({
+            "id": c.club_id,
+            "name": c.club_name,
+            "slug": c.slug,
+            "description": c.description,
+        })
     return jsonify(result), 200
 
 @clubs_bp.route('/clubs', methods=['POST'])
@@ -87,13 +104,58 @@ def create_club():
         'description': club.description
     }), 201
 
+
 @clubs_bp.route('/clubs/<slug>', methods=['GET'])
 def get_club(slug):
-    return
+    """
+    Get details for a club by slug.
+    """
+    club = Club.query.filter_by(slug=slug).first()
+    if not club:
+        return jsonify({'error': 'Club not found'}), 404
+    return jsonify({
+        'id': club.club_id,
+        'name': club.club_name,
+        'slug': club.slug,
+        'description': club.description
+    }), 200
+
 
 @clubs_bp.route('/clubs/<slug>/join', methods=['POST'])
+@jwt_required()
 def join_club(slug):
-    return
+    """
+    Authenticated user joins the club with the given slug.
+    """
+    user_id = get_jwt_identity()
+    try:
+        user_id = int(user_id)
+    except (TypeError, ValueError):
+        return jsonify({'error': 'Invalid token subject'}), 422
+
+    club = Club.query.filter_by(slug=slug).first()
+    if not club:
+        return jsonify({'error': 'Club not found'}), 404
+
+    # Check if already a member
+    existing = UserClub.query.filter_by(user_id=user_id, club_id=club.club_id).first()
+    if existing:
+        return jsonify({'message': 'Already a member'}), 200
+
+    try:
+        membership = UserClub(user_id=user_id, club_id=club.club_id)
+        db.session.add(membership)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        return jsonify({'error': 'Failed to join club'}), 500
+
+    return jsonify({'message': 'Joined club', 'club': {
+        'id': club.club_id,
+        'name': club.club_name,
+        'slug': club.slug,
+        'description': club.description
+    }}), 200
 
 
 @clubs_bp.route('/clubs/<slug>/posts', methods=['POST'])
