@@ -196,6 +196,7 @@ def create_post(slug):
         'id': post.id,
         'club_id': post.club_id,
         'author_id': post.author_id,
+        'author': post.author_username,
         'body': post.body,
         'created_at': post.created_at.isoformat()
     }), 201
@@ -239,12 +240,14 @@ def club_feed(slug):
         feed.append({
             'id': post.id,
             'author_id': post.author_id,
+            'author': post.author_username,
             'body': post.body,
             'created_at': post.created_at.isoformat(),
             'comments': [
                 {
                     'id': c.id,
                     'author_id': c.author_id,
+                    'author': c.author_username,
                     'body': c.body,
                     'created_at': c.created_at.isoformat()
                 } for c in sorted(post.comments, key=lambda c: c.created_at)
@@ -299,6 +302,7 @@ def add_comment(post_id):
         'id': comment.id,
         'post_id': comment.post_id,
         'author_id': comment.author_id,
+        'author': comment.author_username,
         'body': comment.body,
         'created_at': comment.created_at.isoformat()
     }), 201

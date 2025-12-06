@@ -11,6 +11,11 @@ class ClubComment(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     post = db.relationship("ClubPost", back_populates="comments")
+    author = db.relationship("User", backref="club_comments", foreign_keys=[author_id])
+
+    @property
+    def author_username(self):
+        return self.author.username if self.author else None
 
     def __repr__(self):
         return f"<ClubComment {self.id}>"

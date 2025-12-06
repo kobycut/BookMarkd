@@ -161,6 +161,8 @@ class TestClubPosts:
 		assert data['body'] == 'Hello world!'
 		assert data['club_id']
 		assert data['author_id']
+		assert 'author' in data
+		assert data['author'] == 'testuser'
 
 	def test_club_feed_success(self, client, sample_user, app):
 		with app.app_context():
@@ -183,7 +185,7 @@ class TestClubPosts:
 		assert response.status_code == 200
 		data = response.get_json()
 		assert 'feed' in data
-		assert any(post['body'] == 'Feed post' for post in data['feed'])
+		assert any(post['body'] == 'Feed post' and post.get('author') == 'testuser' for post in data['feed'])
 
 
 class TestAddComment:
@@ -226,3 +228,5 @@ class TestAddComment:
 		data = response.get_json()
 		assert data['body'] == 'Nice post!'
 		assert data['post_id'] == post_id
+		assert 'author' in data
+		assert data['author'] == 'testuser'

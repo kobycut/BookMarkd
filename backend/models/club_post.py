@@ -12,6 +12,11 @@ class ClubPost(db.Model):
 
     club = db.relationship("Club", back_populates="posts")
     comments = db.relationship("ClubComment", back_populates="post", cascade="all, delete-orphan")
+    author = db.relationship("User", backref="club_posts", foreign_keys=[author_id])
+
+    @property
+    def author_username(self):
+        return self.author.username if self.author else None
 
     def __repr__(self):
         return f"<ClubPost {self.id}>"
