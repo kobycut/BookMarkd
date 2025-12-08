@@ -107,21 +107,13 @@ This configuration deploys a complete AWS infrastructure:
 Copy the example file and fill in your values:
 
 ```bash
+cd terraform
 cp terraform.tfvars.example terraform.tfvars
 ```
 
-Edit `terraform.tfvars` with your actual values:
+Edit `terraform.tfvars` with your actual values (e.g. database user/password):
 
 ```hcl
-environment = "dev"
-aws_region  = "us-east-1"
-
-# VPC Configuration
-vpc_cidr            = "10.0.0.0/16"
-az_count            = 2
-enable_nat_gateway  = true
-enable_vpc_endpoints = false
-
 # Database Configuration
 db_username = "bookmarkd_user"
 db_password = "YourSecurePassword123!"
