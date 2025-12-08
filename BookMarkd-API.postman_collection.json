@@ -2353,6 +2353,1321 @@
 					}
 				]
 			}
+		},
+		{
+			"name": "Clubs",
+			"item": [
+				{
+					"name": "Get All Clubs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/clubs",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clubs"
+							]
+						},
+						"description": "Retrieve all clubs in the database (public endpoint - no authentication required)"
+					},
+					"response": [
+						{
+							"name": "Get All Clubs Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/clubs",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"clubs"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"id\": 1,\n    \"name\": \"Science Fiction Lovers\",\n    \"slug\": \"science-fiction-lovers\",\n    \"description\": \"A club for fans of sci-fi books\"\n  },\n  {\n    \"id\": 2,\n    \"name\": \"Mystery Book Club\",\n    \"slug\": \"mystery-book-club\",\n    \"description\": \"Discuss mystery and thriller novels\"\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "Get My Clubs",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/clubs/mine",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clubs",
+								"mine"
+							]
+						},
+						"description": "Get all clubs the authenticated user is a member of"
+					},
+					"response": [
+						{
+							"name": "Get My Clubs Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/clubs/mine",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"clubs",
+										"mine"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n  {\n    \"id\": 1,\n    \"name\": \"Science Fiction Lovers\",\n    \"slug\": \"science-fiction-lovers\",\n    \"description\": \"A club for fans of sci-fi books\"\n  }\n]"
+						},
+						{
+							"name": "Get My Clubs - Empty",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/clubs/mine",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"clubs",
+										"mine"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[]"
+						},
+						{
+							"name": "Get My Clubs - Unauthorized",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/clubs/mine",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"clubs",
+										"mine"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"msg\": \"Missing Authorization Header\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Club",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Fantasy Book Club\",\n  \"description\": \"A club for fantasy literature enthusiasts\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/clubs",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clubs"
+							]
+						},
+						"description": "Create a new club. The creating user automatically becomes a member. A unique slug is generated from the club name."
+					},
+					"response": [
+						{
+							"name": "Create Club Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Fantasy Book Club\",\n  \"description\": \"A club for fantasy literature enthusiasts\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/clubs",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"clubs"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 3,\n  \"name\": \"Fantasy Book Club\",\n  \"slug\": \"fantasy-book-club\",\n  \"description\": \"A club for fantasy literature enthusiasts\"\n}"
+						},
+						{
+							"name": "Create Club - Missing Name",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"description\": \"A club without a name\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/clubs",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"clubs"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"Club name is required\"\n}"
+						},
+						{
+							"name": "Create Club - Unauthorized",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Fantasy Book Club\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/clubs",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"clubs"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"msg\": \"Missing Authorization Header\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Club Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/clubs/:slug",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clubs",
+								":slug"
+							],
+							"variable": [
+								{
+									"key": "slug",
+									"value": "science-fiction-lovers",
+									"description": "The slug of the club"
+								}
+							]
+						},
+						"description": "Get details for a specific club by its slug (public endpoint)"
+					},
+					"response": [
+						{
+							"name": "Get Club Details Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/clubs/science-fiction-lovers",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"clubs",
+										"science-fiction-lovers"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 1,\n  \"name\": \"Science Fiction Lovers\",\n  \"slug\": \"science-fiction-lovers\",\n  \"description\": \"A club for fans of sci-fi books\"\n}"
+						},
+						{
+							"name": "Get Club Details - Not Found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/clubs/nonexistent-club",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"clubs",
+										"nonexistent-club"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"Club not found\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Join Club",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/clubs/:slug/join",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clubs",
+								":slug",
+								"join"
+							],
+							"variable": [
+								{
+									"key": "slug",
+									"value": "science-fiction-lovers",
+									"description": "The slug of the club to join"
+								}
+							]
+						},
+						"description": "Authenticated user joins a club by its slug"
+					},
+					"response": [
+						{
+							"name": "Join Club Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/clubs/science-fiction-lovers/join",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"clubs",
+										"science-fiction-lovers",
+										"join"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Joined club\",\n  \"club\": {\n    \"id\": 1,\n    \"name\": \"Science Fiction Lovers\",\n    \"slug\": \"science-fiction-lovers\",\n    \"description\": \"A club for fans of sci-fi books\"\n  }\n}"
+						},
+						{
+							"name": "Join Club - Already Member",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/clubs/science-fiction-lovers/join",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"clubs",
+										"science-fiction-lovers",
+										"join"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Already a member\"\n}"
+						},
+						{
+							"name": "Join Club - Not Found",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/clubs/nonexistent-club/join",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"clubs",
+										"nonexistent-club",
+										"join"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"Club not found\"\n}"
+						},
+						{
+							"name": "Join Club - Unauthorized",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/clubs/science-fiction-lovers/join",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"clubs",
+										"science-fiction-lovers",
+										"join"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"msg\": \"Missing Authorization Header\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Club Post",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"body\": \"Just finished reading Dune! What an amazing book. Anyone else read it?\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/clubs/:slug/posts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clubs",
+								":slug",
+								"posts"
+							],
+							"variable": [
+								{
+									"key": "slug",
+									"value": "science-fiction-lovers",
+									"description": "The slug of the club"
+								}
+							]
+						},
+						"description": "Create a new post in a club. User must be a member of the club."
+					},
+					"response": [
+						{
+							"name": "Create Post Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"body\": \"Just finished reading Dune! What an amazing book. Anyone else read it?\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/clubs/science-fiction-lovers/posts",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"clubs",
+										"science-fiction-lovers",
+										"posts"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 1,\n  \"club_id\": 1,\n  \"author_id\": 1,\n  \"author\": \"testuser\",\n  \"body\": \"Just finished reading Dune! What an amazing book. Anyone else read it?\",\n  \"created_at\": \"2025-12-08T10:30:00\"\n}"
+						},
+						{
+							"name": "Create Post - Missing Body",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/clubs/science-fiction-lovers/posts",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"clubs",
+										"science-fiction-lovers",
+										"posts"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"Post body is required\"\n}"
+						},
+						{
+							"name": "Create Post - Not a Member",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"body\": \"Trying to post without being a member\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/clubs/science-fiction-lovers/posts",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"clubs",
+										"science-fiction-lovers",
+										"posts"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"Not a member of this club\"\n}"
+						},
+						{
+							"name": "Create Post - Club Not Found",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"body\": \"Post content\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/clubs/nonexistent-club/posts",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"clubs",
+										"nonexistent-club",
+										"posts"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"Club not found\"\n}"
+						},
+						{
+							"name": "Create Post - Unauthorized",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"body\": \"Post content\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/clubs/science-fiction-lovers/posts",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"clubs",
+										"science-fiction-lovers",
+										"posts"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"msg\": \"Missing Authorization Header\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Club Feed",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/clubs/:slug/feed?page=1&per_page=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"clubs",
+								":slug",
+								"feed"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page number (default: 1)"
+								},
+								{
+									"key": "per_page",
+									"value": "10",
+									"description": "Items per page (default: 10, max: 50)"
+								}
+							],
+							"variable": [
+								{
+									"key": "slug",
+									"value": "science-fiction-lovers",
+									"description": "The slug of the club"
+								}
+							]
+						},
+						"description": "Get paginated posts (with comments) for a club. User must be a member. Supports pagination with query params: page (default 1), per_page (default 10, max 50)"
+					},
+					"response": [
+						{
+							"name": "Get Club Feed Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/clubs/science-fiction-lovers/feed?page=1&per_page=10",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"clubs",
+										"science-fiction-lovers",
+										"feed"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "per_page",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"page\": 1,\n  \"per_page\": 10,\n  \"total\": 1,\n  \"pages\": 1,\n  \"feed\": [\n    {\n      \"id\": 1,\n      \"author_id\": 1,\n      \"author\": \"testuser\",\n      \"body\": \"Just finished reading Dune! What an amazing book. Anyone else read it?\",\n      \"created_at\": \"2025-12-08T10:30:00\",\n      \"comments\": [\n        {\n          \"id\": 1,\n          \"author_id\": 2,\n          \"author\": \"anotheruser\",\n          \"body\": \"Yes! One of my all-time favorites!\",\n          \"created_at\": \"2025-12-08T11:15:00\"\n        }\n      ]\n    }\n  ]\n}"
+						},
+						{
+							"name": "Get Club Feed - Not a Member",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/clubs/science-fiction-lovers/feed",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"clubs",
+										"science-fiction-lovers",
+										"feed"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"Not a member of this club\"\n}"
+						},
+						{
+							"name": "Get Club Feed - Club Not Found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/clubs/nonexistent-club/feed",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"clubs",
+										"nonexistent-club",
+										"feed"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"Club not found\"\n}"
+						},
+						{
+							"name": "Get Club Feed - Unauthorized",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/clubs/science-fiction-lovers/feed",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"clubs",
+										"science-fiction-lovers",
+										"feed"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"msg\": \"Missing Authorization Header\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Add Comment to Post",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"body\": \"I agree! The world-building is incredible.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/posts/:post_id/comments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"posts",
+								":post_id",
+								"comments"
+							],
+							"variable": [
+								{
+									"key": "post_id",
+									"value": "1",
+									"description": "The ID of the post"
+								}
+							]
+						},
+						"description": "Add a comment to a club post. User must be a member of the club that the post belongs to."
+					},
+					"response": [
+						{
+							"name": "Add Comment Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"body\": \"I agree! The world-building is incredible.\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/posts/1/comments",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"posts",
+										"1",
+										"comments"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"id\": 2,\n  \"post_id\": 1,\n  \"author_id\": 1,\n  \"author\": \"testuser\",\n  \"body\": \"I agree! The world-building is incredible.\",\n  \"created_at\": \"2025-12-08T12:00:00\"\n}"
+						},
+						{
+							"name": "Add Comment - Missing Body",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/posts/1/comments",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"posts",
+										"1",
+										"comments"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"Comment body is required\"\n}"
+						},
+						{
+							"name": "Add Comment - Not a Member",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"body\": \"Trying to comment without being a member\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/posts/1/comments",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"posts",
+										"1",
+										"comments"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"Not a member of this club\"\n}"
+						},
+						{
+							"name": "Add Comment - Post Not Found",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"body\": \"Comment on nonexistent post\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/posts/999/comments",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"posts",
+										"999",
+										"comments"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"error\": \"Post not found\"\n}"
+						},
+						{
+							"name": "Add Comment - Unauthorized",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"body\": \"Comment content\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/posts/1/comments",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"posts",
+										"1",
+										"comments"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"msg\": \"Missing Authorization Header\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Endpoints for managing book clubs, posts, and comments",
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{auth_token}}",
+						"type": "string"
+					}
+				]
+			}
 		}
 	],
 	"event": [
