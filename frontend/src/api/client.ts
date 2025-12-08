@@ -46,6 +46,57 @@ interface BooksResponse extends Array<{
   rating?: number;
 }> {}
 
+interface Club {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+}
+
+interface ClubComment {
+  id: number;
+  author: string;
+  body: string;
+  created_at: string;
+}
+
+interface ClubPost {
+  id: number;
+  author: string;
+  body: string;
+  created_at: string;
+  comments: ClubComment[];
+}
+
+interface ClubFeedResponse {
+  page: number;
+  per_page: number;
+  total: number;
+  pages: number;
+  feed: ClubPost[];
+}
+
+interface JoinClubResponse {
+  message: string;
+  club: Club;
+}
+
+interface CreatePostResponse {
+  id: number;
+  club_id: number;
+  author_id: number;
+  body: string;
+  created_at: string;
+}
+
+interface AddCommentResponse {
+  id: number;
+  post_id: number;
+  author_id: number;
+  body: string;
+  created_at: string;
+}
+
 const getToken = () => localStorage.getItem('token');
 
 const handleError = (response: Response, data: unknown): string => {
@@ -226,5 +277,65 @@ export const api = {
       requiresAuth: true,
     });
     return { success: true };
+  },
+
+  // Clubs endpoints
+  async getClubs(): Promise<Club[]> {
+    return makeRequest<Club[]>('/api/clubs', {
+      method: 'GET',
+      requiresAuth: false,
+    });
+  },
+
+  async getMyClubs(): Promise<Club[]> {
+    return makeRequest<Club[]>('/api/clubs/mine', {
+      method: 'GET',
+      requiresAuth: true,
+    });
+  },
+
+  async getClub(slug: string): Promise<Club> {
+    return makeRequest<Club>(`/api/clubs/${slug}`, {
+      method: 'GET',
+      requiresAuth: false,
+    });
+  },
+
+  async createClub(name: string, description?: string): Promise<Club> {
+    return makeRequest<Club>('/api/clubs', {
+      method: 'POST',
+      body: { name, description },
+      requiresAuth: true,
+    });
+  },
+
+  async joinClub(slug: string): Promise<JoinClubResponse> {
+    return makeRequest<JoinClubResponse>(`/api/clubs/${slug}/join`, {
+      method: 'POST',
+      requiresAuth: true,
+    });
+  },
+
+  async getClubFeed(slug: string, page: number = 1, perPage: number = 10): Promise<ClubFeedResponse> {
+    return makeRequest<ClubFeedResponse>(`/api/clubs/${slug}/feed?page=${page}&per_page=${perPage}`, {
+      method: 'GET',
+      requiresAuth: true,
+    });
+  },
+
+  async createPost(slug: string, body: string): Promise<CreatePostResponse> {
+    return makeRequest<CreatePostResponse>(`/api/clubs/${slug}/posts`, {
+      method: 'POST',
+      body: { body },
+      requiresAuth: true,
+    });
+  },
+
+  async addComment(postId: number, body: string): Promise<AddCommentResponse> {
+    return makeRequest<AddCommentResponse>(`/api/posts/${postId}/comments`, {
+      method: 'POST',
+      body: { body },
+      requiresAuth: true,
+    });
   },
 };

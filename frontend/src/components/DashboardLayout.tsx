@@ -1,0 +1,147 @@
+import { useRef, useState } from 'react';
+import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Button } from './ui/button';
+import { Avatar, AvatarFallback } from './ui/avatar';
+import { BookMarked, Plus, Search, Bell, Settings, LogOut } from 'lucide-react';
+import { AddBookDialog } from './AddBookDialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
+import { useUser } from '@/context/UserContext';
+
+export function DashboardLayout() {
+  const bookListRef = useRef<{ loadBooks: () => Promise<void> }>(null);
+  const [showAddBook, setShowAddBook] = useState(false);
+  const { user, logout } = useUser();
+  const location = useLocation();
+
+  const handleBookAdded = () => {
+    if (bookListRef.current) {
+      bookListRef.current.loadBooks();
+    }
+  };
+
+  const getInitials = (username: string = '') => {
+    return username
+      .split(' ')
+      .map(part => part[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2) || '';
+  };
+
+  const isDashboard = location.pathname === '/';
+  const isClubs = location.pathname === '/clubs';
+
+  return (
+    <div className="min-h-screen bg-linear-to-br from-blue-50/50 via-white to-green-50/50">
+      {/* Navigation Bar */}
+      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <Link to="/" className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 bg-linear-to-br from-blue-500 to-green-500 rounded-xl">
+                <BookMarked className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-xl text-gray-900">BookMarkd</span>
+            </Link>
+
+            {/* Search Bar */}
+            <div className="flex-1 max-w-2xl mx-8">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search your books..."
+                  className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            {/* Right Menu */}
+            <div className="flex items-center gap-4">
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className="text-purple-600 border-purple-200 hover:bg-purple-50"
+              >
+                <Link to={isDashboard ? '/recommend' : '/'}>
+                  {isDashboard ? 'Find Your Next Favorite Book!' : 'Back to Books'}
+                </Link>
+              </Button>
+
+              {!isClubs && (
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="text-purple-600 border-purple-200 hover:bg-purple-50"
+                >
+                  <Link to="/clubs">Book Clubs</Link>
+                </Button>
+              )}
+
+              <button className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors hover:cursor-pointer">
+                <Bell className="w-5 h-5" />
+                <span className="absolute top-1 right-1 w-2 h-2 bg-blue-600 rounded-full"></span>
+              </button>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-2 hover:opacity-80 transition-opacity hover:cursor-pointer">
+                    <Avatar>
+                      <AvatarFallback>{getInitials(user?.username)}</AvatarFallback>
+                    </Avatar>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>
+                    <div>
+                      <p>{user?.username}</p>
+                      <p className="text-sm text-gray-500">{user?.email}</p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="hover:cursor-pointer">
+                    <Settings className="w-4 h-4 mr-2" />
+                    Settings
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="hover:cursor-pointer" onClick={logout}>
+                    <LogOut className="w-4 h-4 mr-2 hover:cursor-pointer" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Outlet context={{ bookListRef, showAddBook, setShowAddBook, handleBookAdded } as { bookListRef: React.RefObject<{ loadBooks: () => Promise<void> }>, showAddBook: boolean, setShowAddBook: (show: boolean) => void, handleBookAdded: () => void }} />
+      </main>
+
+      {/* Floating Add Button (Mobile) */}
+      {isDashboard && (
+        <button
+          onClick={() => setShowAddBook(true)}
+          className="lg:hidden fixed bottom-6 right-6 w-14 h-14 bg-linear-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white rounded-full shadow-lg flex items-center justify-center"
+        >
+          <Plus className="w-6 h-6" />
+        </button>
+      )}
+
+      {/* Add Book Dialog */}
+      <AddBookDialog open={showAddBook} onOpenChange={setShowAddBook} onBookAdded={handleBookAdded} />
+    </div>
+  );
+}
+
