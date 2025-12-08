@@ -10,13 +10,43 @@ This directory contains Terraform configuration for deploying the BookMarkd MySQ
    terraform --version
    ```
 
-2. **AWS CLI** configured with credentials
+   Should return `Terraform v1.14.0` or similar.
+
+   Otherwise, install from [terraform.io](https://www.terraform.io/downloads.html).
+
+2. **AWS CLI** Installed
+
+   ```bash
+   aws --version
+   ```
+
+   Should return `aws-cli/2.32.11 Python/3.13.9 Windows/11 exe/AMD64` or similar.
+
+   Otherwise, install with chocolatey or similar:
+
+   ```bash
+   choco install awscli
+   ```
+
+3. **AWS CLI** configured with credentials
+
+   Verify credentials by retrieving your AWS Account Id:
+
+   ```bash
+   aws sts get-caller-identity
+   ```
+
+   Should return your Account ex. 123456789012 (and other details) which matches the top right of the AWS Console.
+
+   Otherwise, configure it with:
 
    ```bash
    aws configure
    ```
 
-3. **Existing AWS Resources**:
+   Note: You can later check `C:\Users\YourUser\.aws\credentials` for your configuration info.
+
+4. **Existing AWS Resources**:
 
    - VPC with at least 2 private subnets in different availability zones
    - Security group for your backend application
@@ -37,11 +67,12 @@ This configuration deploys:
 | File | Purpose |
 |------|---------|
 | `main.tf` | Provider configuration and Terraform settings |
-| `variables.tf` | Input variable definitions |
+| `variables.tf` | Input variable definitions (not values) |
 | `rds.tf` | RDS instance and related resources |
 | `security-groups.tf` | Security group rules for database access |
 | `outputs.tf` | Output values (endpoints, connection strings) |
 | `terraform.tfvars.example` | Example variable values |
+| `terraform.tfvars` | User variable values (not committed) |
 | `.gitignore` | Prevents committing sensitive files |
 
 ## 🚀 Quick Start
