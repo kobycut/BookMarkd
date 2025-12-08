@@ -79,3 +79,44 @@ endpoints:
     description: "Add or update a rating (0-5) for a completed book. Only works for books with 'read' status"
     path: "/api/books/{book_id}/rating"
     method: "PUT"
+  
+  # Clubs Endpoints
+  - name: "Get All Clubs"
+    description: "Retrieve all clubs in the database (public endpoint)"
+    path: "/api/clubs"
+    method: "GET"
+  
+  - name: "Get My Clubs"
+    description: "Get all clubs the authenticated user is a member of"
+    path: "/api/clubs/mine"
+    method: "GET"
+  
+  - name: "Create Club"
+    description: "Create a new club with a name and optional description. The creating user automatically becomes a member. A unique slug is generated from the club name"
+    path: "/api/clubs"
+    method: "POST"
+  
+  - name: "Get Club Details"
+    description: "Get details for a specific club by its slug"
+    path: "/api/clubs/{slug}"
+    method: "GET"
+  
+  - name: "Join Club"
+    description: "Authenticated user joins a club by its slug"
+    path: "/api/clubs/{slug}/join"
+    method: "POST"
+  
+  - name: "Create Club Post"
+    description: "Create a new post in a club. User must be a member of the club"
+    path: "/api/clubs/{slug}/posts"
+    method: "POST"
+  
+  - name: "Get Club Feed"
+    description: "Get paginated posts (with comments) for a club. User must be a member. Supports pagination with query params: page (default 1), per_page (default 10, max 50)"
+    path: "/api/clubs/{slug}/feed"
+    method: "GET"
+  
+  - name: "Add Comment to Post"
+    description: "Add a comment to a club post. User must be a member of the club that the post belongs to"
+    path: "/api/posts/{post_id}/comments"
+    method: "POST"
