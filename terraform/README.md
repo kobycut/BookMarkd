@@ -10,13 +10,13 @@ This directory contains Terraform configuration for deploying the BookMarkd MySQ
    terraform --version
    ```
 
-3. **AWS CLI** configured with credentials
+2. **AWS CLI** configured with credentials
 
    ```bash
    aws configure
    ```
 
-5. **Existing AWS Resources**:
+3. **Existing AWS Resources**:
 
    - VPC with at least 2 private subnets in different availability zones
    - Security group for your backend application
@@ -142,13 +142,13 @@ Common RDS instance classes:
    }
    ```
 
-3. **Enable encryption** at rest (already configured)
+2. **Enable encryption** at rest (already configured)
 
-4. **Restrict network access** via security groups (already configured)
+3. **Restrict network access** via security groups (already configured)
 
-5. **Use IAM authentication** for enhanced security (optional)
+4. **Use IAM authentication** for enhanced security (optional)
 
-6. **Enable CloudWatch alarms** for monitoring:
+5. **Enable CloudWatch alarms** for monitoring:
    - CPU utilization
    - Storage space
    - Connection count
@@ -231,13 +231,13 @@ python database/seed.py
    terraform output db_security_group_id
    ```
 
-3. **Verify endpoint**:
+2. **Verify endpoint**:
 
    ```bash
    terraform output db_endpoint
    ```
 
-5. **Test connection**:
+3. **Test connection**:
 
    ```bash
    mysql -h $(terraform output -raw db_address) -u bookmarkd_user -p
