@@ -32,6 +32,42 @@ interface Comment {
   created_at: string;
 }
 
+const formatLocalTime = (utcTimestamp: string): string => {
+  // Ensure the timestamp is treated as UTC by appending 'Z' if no timezone is present
+  // The backend returns timestamps like "2025-12-08T19:22:04" without timezone info
+  // We need to explicitly mark it as UTC so JavaScript converts it to local time
+  let timestamp = utcTimestamp.trim();
+  
+  // Check if it already has a timezone indicator
+  const hasTimezone = timestamp.includes('Z') || 
+                      timestamp.includes('+') || 
+                      (timestamp.match(/[-+]\d{2}:\d{2}$/) !== null);
+  
+  // If no timezone, append 'Z' to indicate UTC
+  if (!hasTimezone) {
+    timestamp = timestamp + 'Z';
+  }
+  
+  // Parse the UTC timestamp and convert to local time
+  const date = new Date(timestamp);
+  
+  // Check if date is valid
+  if (isNaN(date.getTime())) {
+    // Fallback: try parsing without 'Z' as a last resort
+    return new Date(utcTimestamp).toLocaleString();
+  }
+  
+  return date.toLocaleString(undefined, {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true
+  });
+};
+
 export function BookClubs() {
   const [clubs, setClubs] = useState<Club[]>([]);
   const [myClubs, setMyClubs] = useState<Set<number>>(new Set());
@@ -304,7 +340,7 @@ export function BookClubs() {
                     <div key={post.id} className="border border-purple-200 rounded-lg p-4 hover:shadow-sm transition-shadow bg-white">
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-semibold text-sm">{post.author}</span>
-                        <span className="text-xs text-gray-400">{new Date(post.created_at).toLocaleString()}</span>
+                        <span className="text-xs text-gray-400">{formatLocalTime(post.created_at)}</span>
                       </div>
                       <div className="text-sm text-gray-700 mb-3">{post.body}</div>
                       
@@ -316,7 +352,7 @@ export function BookClubs() {
                               <div key={comment.id} className="pl-3 border-l-2 border-purple-200">
                                 <div className="flex items-center justify-between mb-1">
                                   <span className="font-semibold text-xs">{comment.author}</span>
-                                  <span className="text-xs text-gray-400">{new Date(comment.created_at).toLocaleString()}</span>
+                                  <span className="text-xs text-gray-400">{formatLocalTime(comment.created_at)}</span>
                                 </div>
                                 <div className="text-xs text-gray-600">{comment.body}</div>
                               </div>
