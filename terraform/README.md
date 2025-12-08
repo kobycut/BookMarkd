@@ -61,6 +61,7 @@ This directory contains Terraform configuration for deploying the BookMarkd MySQ
 This configuration deploys a complete AWS infrastructure:
 
 ### Networking
+
 - **VPC** with configurable CIDR block (default: 10.0.0.0/16)
 - **Public Subnets** (2+ across different AZs) for NAT Gateways and load balancers
 - **Private Subnets** (2+ across different AZs) for RDS and backend applications
@@ -70,6 +71,7 @@ This configuration deploys a complete AWS infrastructure:
 - **VPC Endpoints** (optional) for AWS services like S3
 
 ### Database
+
 - **AWS RDS MySQL 8.0** database instance
 - **DB Subnet Group** across multiple availability zones
 - **Security Groups** restricting RDS access to backend only
@@ -79,6 +81,7 @@ This configuration deploys a complete AWS infrastructure:
 - **Performance Insights** and CloudWatch logging
 
 ### Security
+
 - **Backend Security Group** for application servers
 - **RDS Security Group** allowing MySQL (port 3306) only from backend
 - **Encrypted storage** at rest for RDS
