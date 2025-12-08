@@ -150,9 +150,6 @@ Type `yes` when prompted to create the resources.
 ```bash
 # View all outputs
 terraform output
-
-# Get connection string for Flask
-terraform output -raw db_connection_string
 ```
 
 ## 🔧 Configuration
@@ -258,6 +255,8 @@ db_instance_class = "db.t3.small"  # Upgrade from db.t3.micro
 
 **Adding more availability zones**:
 
+Check your AWS region for available AZs [AWS Global Infrastructure](https://aws.amazon.com/about-aws/global-infrastructure/regions_az/), then update:
+
 ```hcl
 # In terraform.tfvars
 az_count = 3  # Increase from 2
@@ -274,6 +273,14 @@ enable_multi_az = true
 ## 🗑️ Destroying Resources
 
 **⚠️ WARNING**: This will permanently delete your database!
+
+First check the destroy plan:
+
+```bash
+terraform plan -destroy
+```
+
+Then run the destroy command:
 
 ```bash
 terraform destroy
@@ -299,16 +306,22 @@ class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 ```
 
-Set the environment variable:
-
-```bash
-export DATABASE_URL="mysql://user:pass@rds-endpoint/bookmarkd"
-```
-
-Or use the Terraform output directly:
+Use the Terraform output directly:
 
 ```bash
 export DATABASE_URL=$(terraform output -raw db_connection_string)
+```
+
+Or (1) manually grab the sensitive connection string from Terraform output:
+
+```bash
+terraform output -raw db_connection_string
+```
+
+Then (2) manually set the environment variable:
+
+```bash
+export DATABASE_URL="mysql://user:pass@rds-endpoint/bookmarkd"
 ```
 
 ### Run Database Migrations
@@ -347,7 +360,7 @@ python database/seed.py
 
 ### State Management
 
-If working in a team, use remote state storage:
+If working in a team, use remote IAC Terraform-state storage:
 
 1. Create S3 bucket and DynamoDB table
 2. Uncomment backend configuration in `main.tf`
@@ -358,6 +371,7 @@ If working in a team, use remote state storage:
 - [AWS RDS Documentation](https://docs.aws.amazon.com/rds/)
 - [Terraform AWS Provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
 - [RDS Best Practices](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_BestPractices.html)
+- [AWS Global Infrastructure](https://aws.amazon.com/about-aws/global-infrastructure/regions_az/)
 
 ## 💰 Cost Estimation
 
