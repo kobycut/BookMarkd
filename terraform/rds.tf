@@ -56,7 +56,7 @@ resource "aws_db_instance" "bookmarkd" {
 
 resource "aws_db_subnet_group" "main" {
   name       = "bookmarkd-db-subnet-${var.environment}"
-  subnet_ids = var.private_subnet_ids
+  subnet_ids = aws_subnet.private[*].id
   
   tags = {
     Name        = "BookMarkd DB subnet group"

@@ -5,6 +5,12 @@
 environment = "dev"
 aws_region  = "us-east-1"
 
+# VPC Configuration
+vpc_cidr            = "10.0.0.0/16"  # VPC IP range
+az_count            = 2               # Number of availability zones (minimum 2)
+enable_nat_gateway  = true            # Enable NAT for private subnet internet access
+enable_vpc_endpoints = false          # Enable VPC endpoints for AWS services (optional)
+
 # Database configuration
 db_instance_class = "db.t3.micro"  # Free tier eligible
 db_username       = "bookmarkd_user"
@@ -16,12 +22,7 @@ max_allocated_storage = 100
 
 # Backup configuration
 backup_retention_period = 7
-enable_multi_az        = false  # Set to true for production
-
-# Network configuration (you'll need to create or reference existing resources)
-vpc_id                    = "vpc-xxxxxxxxxxxxxxxxx"
-private_subnet_ids        = ["subnet-xxxxxxxxxxxxxxxxx", "subnet-yyyyyyyyyyyyyyyyy"]
-backend_security_group_id = "sg-xxxxxxxxxxxxxxxxx"
+enable_multi_az        = false  # Set to true for production high availability
 
 # Optional: Additional tags
 tags = {

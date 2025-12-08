@@ -35,23 +35,33 @@ variable "db_password" {
   }
 }
 
-variable "vpc_id" {
-  description = "VPC ID where RDS will be deployed"
+# VPC Configuration
+variable "vpc_cidr" {
+  description = "CIDR block for VPC"
   type        = string
+  default     = "10.0.0.0/16"
 }
 
-variable "private_subnet_ids" {
-  description = "List of private subnet IDs for RDS (minimum 2 for Multi-AZ)"
-  type        = list(string)
+variable "az_count" {
+  description = "Number of availability zones to use (minimum 2 for RDS Multi-AZ)"
+  type        = number
+  default     = 2
   validation {
-    condition     = length(var.private_subnet_ids) >= 2
-    error_message = "At least 2 private subnets are required for RDS."
+    condition     = var.az_count >= 2
+    error_message = "At least 2 availability zones are required for RDS."
   }
 }
 
-variable "backend_security_group_id" {
-  description = "Security group ID of the backend application"
-  type        = string
+variable "enable_nat_gateway" {
+  description = "Enable NAT Gateway for private subnets (required for internet access from private subnets)"
+  type        = bool
+  default     = true
+}
+
+variable "enable_vpc_endpoints" {
+  description = "Enable VPC endpoints for AWS services (recommended for security and cost)"
+  type        = bool
+  default     = false
 }
 
 variable "allocated_storage" {

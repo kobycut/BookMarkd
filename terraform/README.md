@@ -46,21 +46,42 @@ This directory contains Terraform configuration for deploying the BookMarkd MySQ
 
    Note: You can later check `C:\Users\YourUser\.aws\credentials` for your configuration info.
 
-4. **Existing AWS Resources**:
+4. **IAM Permissions**:
 
-   - VPC with at least 2 private subnets in different availability zones
-   - Security group for your backend application
-   - IAM permissions to create RDS instances, security groups, and related resources
+   Your AWS user/role needs permissions to create:
+   - VPC and networking resources (VPC, subnets, route tables, Internet Gateway, NAT Gateway)
+   - RDS instances and related resources
+   - Security groups
+   - Elastic IPs
+
+   **Note**: This Terraform configuration now creates all required networking infrastructure automatically!
 
 ## 🏗️ Architecture
 
-This configuration deploys:
+This configuration deploys a complete AWS infrastructure:
 
+### Networking
+- **VPC** with configurable CIDR block (default: 10.0.0.0/16)
+- **Public Subnets** (2+ across different AZs) for NAT Gateways and load balancers
+- **Private Subnets** (2+ across different AZs) for RDS and backend applications
+- **Internet Gateway** for public subnet internet access
+- **NAT Gateways** (optional, one per AZ) for private subnet outbound internet access
+- **Route Tables** properly configured for public and private subnets
+- **VPC Endpoints** (optional) for AWS services like S3
+
+### Database
 - **AWS RDS MySQL 8.0** database instance
 - **DB Subnet Group** across multiple availability zones
-- **Security Group** restricting access to backend only
-- **DB Parameter Group** with optimized settings for BookMarkd
-- **Automated backups** and optional Multi-AZ deployment
+- **Security Groups** restricting RDS access to backend only
+- **DB Parameter Group** with optimized UTF-8 settings for BookMarkd
+- **Automated backups** with configurable retention
+- **Multi-AZ deployment** (optional for production)
+- **Performance Insights** and CloudWatch logging
+
+### Security
+- **Backend Security Group** for application servers
+- **RDS Security Group** allowing MySQL (port 3306) only from backend
+- **Encrypted storage** at rest for RDS
 
 ## 📁 Files
 
@@ -68,9 +89,10 @@ This configuration deploys:
 |------|---------|
 | `main.tf` | Provider configuration and Terraform settings |
 | `variables.tf` | Input variable definitions (not values) |
+| `vpc.tf` | VPC, subnets, NAT gateways, and networking |
 | `rds.tf` | RDS instance and related resources |
-| `security-groups.tf` | Security group rules for database access |
-| `outputs.tf` | Output values (endpoints, connection strings) |
+| `security-groups.tf` | Security groups for backend and RDS |
+| `outputs.tf` | Output values (endpoints, connection strings, VPC info) |
 | `terraform.tfvars.example` | Example variable values |
 | `terraform.tfvars` | User variable values (not committed) |
 | `.gitignore` | Prevents committing sensitive files |
@@ -91,12 +113,15 @@ Edit `terraform.tfvars` with your actual values:
 environment = "dev"
 aws_region  = "us-east-1"
 
+# VPC Configuration
+vpc_cidr            = "10.0.0.0/16"
+az_count            = 2
+enable_nat_gateway  = true
+enable_vpc_endpoints = false
+
+# Database Configuration
 db_username = "bookmarkd_user"
 db_password = "YourSecurePassword123!"
-
-vpc_id                    = "vpc-xxxxx"
-private_subnet_ids        = ["subnet-xxxxx", "subnet-yyyyy"]
-backend_security_group_id = "sg-xxxxx"
 ```
 
 **⚠️ IMPORTANT**: Never commit `terraform.tfvars` to version control!
@@ -149,6 +174,17 @@ The configuration automatically adjusts based on the `environment` variable:
 | Performance Insights | Disabled | Enabled |
 | Final Snapshot | Skipped | Created |
 
+### VPC Configuration Options
+
+| Variable | Description | Default | Notes |
+|----------|-------------|---------|-------|
+| `vpc_cidr` | VPC IP range | `10.0.0.0/16` | Provides 65,536 IP addresses |
+| `az_count` | Number of AZs | `2` | Minimum 2 required for RDS |
+| `enable_nat_gateway` | NAT for internet access | `true` | ~$32/month per NAT Gateway |
+| `enable_vpc_endpoints` | VPC endpoints for AWS services | `false` | Improves security and reduces costs |
+
+**Cost Tip**: For dev environments, you can set `enable_nat_gateway = false` to save ~$32/month if your private resources don't need internet access.
+
 ### Instance Sizing
 
 Common RDS instance classes:
@@ -161,6 +197,22 @@ Common RDS instance classes:
 | `db.r6g.large` | 2 | 16 GB | Large Production | ~$145 |
 
 *Approximate costs in us-east-1, subject to change
+
+### Total Infrastructure Cost Estimate
+
+For a **development environment**:
+
+- RDS db.t3.micro: ~$15/month
+- NAT Gateway (1 AZ): ~$32/month
+- EBS storage (20GB): ~$2/month
+- **Total**: ~$49/month
+
+For **production with high availability**:
+
+- RDS db.t3.small (Multi-AZ): ~$60/month
+- NAT Gateways (2 AZs): ~$64/month
+- EBS storage (20GB, replicated): ~$4/month
+- **Total**: ~$128/month
 
 ## 🔐 Security Best Practices
 
@@ -199,6 +251,30 @@ After deployment, monitor your database in AWS Console:
 3. Run `terraform apply` to apply changes
 
 Terraform will only update what changed.
+
+### Common Updates
+
+**Scaling RDS instance**:
+
+```hcl
+# In terraform.tfvars
+db_instance_class = "db.t3.small"  # Upgrade from db.t3.micro
+```
+
+**Adding more availability zones**:
+
+```hcl
+# In terraform.tfvars
+az_count = 3  # Increase from 2
+```
+
+**Enabling Multi-AZ for production**:
+
+```hcl
+# In terraform.tfvars
+environment = "production"
+enable_multi_az = true
+```
 
 ## 🗑️ Destroying Resources
 
